@@ -16,6 +16,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @in selected_contract_idx::Integer = -1
   @out current_workflow::Workflow = Workflow()
   @out partners::Vector{Partner} = []
+  @out partner_ids::Vector{Dict{String,Any}} = []
   @out current_partner::Partner = Partner()
   @in selected_partner_idx::Integer = -1
   @out products::Vector{Product} = []
@@ -58,6 +59,12 @@ CS_UNDO = Stack{Dict{String,Any}}()
     cs["loaded"] = "false"
     prs = Dict{String,Any}("loaded" => "false")
     ps = Dict{String,Any}("loaded" => "false")
+    partners = LifeInsuranceDataModel.get_partners()
+    partner_ids = map(partners) do p
+      Dict("value" => p.id.value, "label" => "hansi")
+    end
+    push!(__model__)
+    @show partner_ids
     @show "App is loaded"
     tab = "contracts"
   end
@@ -213,177 +220,178 @@ CS_UNDO = Stack{Dict{String,Any}}()
   end
 
   @onchange command begin
-    try
-      @show command
+    if command != ""
 
-      if command == "add productitem"
-        @show command
-        command = ""
-      end
-      if command == "add contractpartner"
-        @show command
-        @show cs["partner_refs"]
-
-
-        cprj = JSON.parse(JSON.json(ContractPartnerReference(
-          rev=ContractPartnerRefRevision(ref_role=DbId(new_contract_partner_role), ref_partner=DbId(new_contract_partner)),
-          ref=PartnerSection())))
-        new_contract_partner_role = 0
-        new_contract_partner = 0
-        append!(cs["partner_refs"], [cprj])
-        @show cs["partner_refs"]
-        @info "anzahl prefs= "
-        @info length(cs["partner_refs"])
-        push!(__model__)
-        command = ""
-      end
-      if command == "create contract"
-        activetxn = true
-        w1 = Workflow(
-          type_of_entity="Contract",
-          tsw_validfrom=ref_time,
-        )
-        create_entity!(w1)
-        c = Contract()
-        cr = ContractRevision(description="contract creation properties")
-        create_component!(c, cr, w1)
-        current_workflow = w1
-        current_contract = c
-        @show command
-        command = ""
-        tab = ""
-        tab = "contracts"
-      end
-
-      if command == "start transaction"
-        activetxn = true
-        w1 = Workflow(
-          type_of_entity="Contract",
-          ref_history=current_contract.ref_history,
-          tsw_validfrom=ref_time,
-        )
-        update_entity!(w1)
-        current_workflow = w1
-        cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
-        cs["loaded"] = "true"
-        push!(__model__)
-        @show command
-        command = ""
-
-      end
-
-      #if isnothing(cs["partner_refs"][idx+1]["rev"]["id"]["value"])
-      #  deleteat!(cs["partner_refs"], idx + 1)
-      #  @info "after delete new cp"
-      #else
-      #  cs["partner_refs"][idx+1]["rev"]["ref_invalidfrom"]["value"] = current_workflow.ref_version
-      #  @info "after delete persisted cp"
-      #end
-
-
-      if startswith(command, "delete_contract_partner")
-
+      try
         @show command
 
+        if command == "add productitem"
+          @show command
+          command = ""
+        end
+        if command == "add contractpartner"
+          @show command
+          @show cs["partner_refs"]
 
-        @show first(CS_UNDO)["partner_refs"]
-        idx = parse(Int64, chopprefix(command, "delete_contract_partner:"))
 
-        @show cs["partner_refs"][idx+1]["rev"]
-        if isnothing(cs["partner_refs"][idx+1]["rev"]["id"]["value"])
-          deleteat!(cs["partner_refs"], idx + 1)
-          @info "after delete new cp"
-        else
-          cs["partner_refs"][idx+1]["rev"]["ref_invalidfrom"]["value"] = current_workflow.ref_version
+          cprj = JSON.parse(JSON.json(ContractPartnerReference(
+            rev=ContractPartnerRefRevision(ref_role=DbId(new_contract_partner_role), ref_partner=DbId(new_contract_partner)),
+            ref=PartnerSection())))
+          new_contract_partner_role = 0
+          new_contract_partner = 0
+          append!(cs["partner_refs"], [cprj])
+          @show cs["partner_refs"]
+          @info "anzahl prefs= "
+          @info length(cs["partner_refs"])
+          push!(__model__)
+          command = ""
+        end
+        if command == "create contract"
+          activetxn = true
+          w1 = Workflow(
+            type_of_entity="Contract",
+            tsw_validfrom=ref_time,
+          )
+          create_entity!(w1)
+          c = Contract()
+          cr = ContractRevision(description="contract creation properties")
+          create_component!(c, cr, w1)
+          current_workflow = w1
+          current_contract = c
+          @show command
+          command = ""
+          tab = ""
+          tab = "contracts"
+        end
+
+        if command == "start transaction"
+          activetxn = true
+          w1 = Workflow(
+            type_of_entity="Contract",
+            ref_history=current_contract.ref_history,
+            tsw_validfrom=ref_time,
+          )
+          update_entity!(w1)
+          current_workflow = w1
+          cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
+          cs["loaded"] = "true"
+          push!(__model__)
+          @show command
+          command = ""
+
+        end
+
+        #if isnothing(cs["partner_refs"][idx+1]["rev"]["id"]["value"])
+        #  deleteat!(cs["partner_refs"], idx + 1)
+        #  @info "after delete new cp"
+        #else
+        #  cs["partner_refs"][idx+1]["rev"]["ref_invalidfrom"]["value"] = current_workflow.ref_version
+        #  @info "after delete persisted cp"
+        #end
+
+
+        if startswith(command, "delete_contract_partner")
+
+          @show command
+
+
+          @show first(CS_UNDO)["partner_refs"]
+          idx = parse(Int64, chopprefix(command, "delete_contract_partner:"))
+
           @show cs["partner_refs"][idx+1]["rev"]
-          @info "after delete persisted cp"
-        end
-        push!(__model__)
-      end
-
-      if command == "pop"
-        @info "before pop"
-        @show first(CS_UNDO)["partner_refs"]
-        cs = pop!(CS_UNDO)
-        push!(__model__)
-        @info "after pop"
-        @show cs["partner_refs"]
-      end
-
-      if command == "push"
-        push!(CS_UNDO, deepcopy(cs))
-        @show first(CS_UNDO)["partner_refs"]
-      end
-
-      if command == "persist"
-        @show command
-        @show cs_persisted
-        deltas = compareModelStateContract(cs_persisted, cs, current_workflow)
-        @info "showing deltas"
-        @show deltas
-        @info "ende deltas"
-        for delta in deltas
-          prev = delta[1]
-          curr = delta[2]
-          if !isnothing(prev) # component is not new, db identity has been set 
-            @info "preexisting component"
-            @show curr.ref_invalidfrom.value
-            @show prev.ref_invalidfrom.value
-            @show current_workflow.ref_version.value
-            @show curr.ref_invalidfrom.value == current_workflow.ref_version.value
-            if parse(Int, curr.ref_invalidfrom.value) == current_workflow.ref_version.value# component has just been deleted 
-              @info "deleting component"
-              @show curr
-              delete_component!(curr, current_workflow)
-            else
-              @info "comparing component"
-              update_component!(prev, curr, current_workflow)
-            end
+          if isnothing(cs["partner_refs"][idx+1]["rev"]["id"]["value"])
+            deleteat!(cs["partner_refs"], idx + 1)
+            @info "after delete new cp"
           else
-            @info("new component ")
-            @show curr
-            @info "Type is" * string(typeof(curr))
-            ct = get_typeof_component(curr)
-            @show ct
-            @info "Component Type is" * string(ct)
-            # ContractPartnerRef
-            # Workflow
-            @show current_workflow.ref_history
-            @show current_workflow.ref_version
-            @show current_contract.id
-            currc = ct(ref_history=current_workflow.ref_history, ref_version=current_workflow.ref_version,
-              ref_super=current_contract.id)
-            @show currc
-            create_component!(currc, curr, current_workflow)
-
+            cs["partner_refs"][idx+1]["rev"]["ref_invalidfrom"]["value"] = current_workflow.ref_version
+            @show cs["partner_refs"][idx+1]["rev"]
+            @info "after delete persisted cp"
           end
+          push!(__model__)
         end
-        cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, txn_time, ref_time, activetxn ? 1 : 0)))
-        cs["loaded"] = "true"
-        push!(__model__)
-        command = ""
-      end
-      if command == "commit"
-        @show command
-        @show current_workflow
-        commit_workflow!(current_workflow)
-        activetxn = 0
-        current_workflow = Workflow()
-        command = ""
-      end
-      if command == "rollback"
-        @show command
-        @show current_workflow
-        rollback_workflow!(current_workflow)
-        activetxn = 0
-        current_workflow = Workflow()
-        command = ""
-      end
 
-    catch err
-      println("wassis shief gegangen ")
+        if command == "pop"
+          @info "before pop"
+          @show first(CS_UNDO)["partner_refs"]
+          cs = pop!(CS_UNDO)
+          push!(__model__)
+          @info "after pop"
+          @show cs["partner_refs"]
+        end
 
-      @error "ERROR: " exception = (err, catch_backtrace())
+        if command == "push"
+          push!(CS_UNDO, deepcopy(cs))
+          @show first(CS_UNDO)["partner_refs"]
+        end
+
+        if command == "persist"
+          @show command
+          @show cs_persisted
+          deltas = compareModelStateContract(cs_persisted, cs, current_workflow)
+          @info "showing deltas"
+          @show deltas
+          @info "ende deltas"
+          for delta in deltas
+            prev = delta[1]
+            curr = delta[2]
+            if !isnothing(prev) # component is not new, db identity has been set 
+              @info "preexisting component"
+              @show curr.ref_invalidfrom.value
+              @show prev.ref_invalidfrom.value
+              @show current_workflow.ref_version.value
+              @show curr.ref_invalidfrom.value == current_workflow.ref_version.value
+              if curr.ref_invalidfrom.value == current_workflow.ref_version.value # component has just been deleted 
+                @info "deleting component"
+                @show curr
+                delete_component!(curr, current_workflow)
+              else
+                @info "comparing component"
+                update_component!(prev, curr, current_workflow)
+              end
+            else
+              @info("new component ")
+              @show curr
+              @info "Type is" * string(typeof(curr))
+              ct = get_typeof_component(curr)
+              @show ct
+              @info "Component Type is" * string(ct)
+              # ContractPartnerRef
+              # Workflow
+              @show current_workflow.ref_history
+              @show current_workflow.ref_version
+              @show current_contract.id
+              currc = ct(ref_history=current_workflow.ref_history, ref_version=current_workflow.ref_version,
+                ref_super=current_contract.id)
+              @show currc
+              create_component!(currc, curr, current_workflow)
+
+            end
+          end
+          cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, txn_time, ref_time, activetxn ? 1 : 0)))
+          cs["loaded"] = "true"
+          push!(__model__)
+        end
+        if command == "commit"
+          @show command
+          @show current_workflow
+          commit_workflow!(current_workflow)
+          activetxn = 0
+          current_workflow = Workflow()
+        end
+        if command == "rollback"
+          @show command
+          @show current_workflow
+          rollback_workflow!(current_workflow)
+          activetxn = 0
+          current_workflow = Workflow()
+        end
+        command = ""
+      catch err
+        println("wassis shief gegangen ")
+
+        @error "ERROR: " exception = (err, catch_backtrace())
+        command = ""
+      end
     end
   end
 
