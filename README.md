@@ -1,4 +1,11 @@
-Architecture MVVM
+# What is it?
+
+This is initial scaffolding for a 
+* reactive Webapp for Life Insurance Contracts
+* sporting bitemporal data management and
+* pluggable product data
+
+## MVVM Architecture 
 
 ### Transactions
 

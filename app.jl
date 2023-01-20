@@ -10,6 +10,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @out activetxn::Bool = false
   @in command::String = ""
   @in prompt_new_txn::Bool = false
+  @in prompt_create_contract::Bool = false
   @out contracts::Vector{Contract} = []
   @out contract_ids::Dict{Int64,Int64} = Dict{Int64,Int64}()
   @out current_contract::Contract = Contract()
@@ -20,12 +21,15 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @out current_partner::Partner = Partner()
   @in selected_partner_idx::Integer = -1
   @out products::Vector{Product} = []
+  @out product_ids::Vector{Dict{String,Any}} = []
   @out current_product::Product = Product()
   @in selected_product_idx::Integer = -1
   @in new_contract_partner_role::Integer = 0
   @in new_contract_partner::Integer = 0
   @in selected_contractpartner_idx::Integer = -1
   @in selected_productitem_idx::Integer = -1
+  @in new_tariffitem_partner_role::Integer = 0
+  @in new_tariffitem_partner::Integer = 0
   @in selected_version::String = ""
   @out current_version::Integer = 0
   @out txn_time::ZonedDateTime = now(tz"UTC")
@@ -41,7 +45,8 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @in leftDrawerOpen::Bool = false
   @in show_contract_partners::Bool = false
   @in show_product_items::Bool = false
-  @in selected_product::Integer = 0
+  @in new_product_reference::Integer = 0
+  @out tpidrolemap::Dict{Integer,Integer} = Dict{Integer,Integer}()
   @in show_tariff_item_partners::Bool = false
   @in show_tariff_items::Bool = false
   @out rolesContractPartner::Vector{Dict{String,Any}} = []
@@ -63,8 +68,15 @@ CS_UNDO = Stack{Dict{String,Any}}()
     partner_ids = map(partners) do p
       Dict("value" => p.id.value, "label" => "hansi")
     end
+
+    for p in LifeInsuranceDataModel.get_products()
+      rev = LifeInsuranceDataModel.prsection(p.id.value, now(tz"UTC"), now(tz"UTC"), 0).revision
+      push!(product_ids, Dict("label" => rev.description, "value" => rev.id.value))
+    end
+
     push!(__model__)
     @show partner_ids
+    @show product_ids
     @show "App is loaded"
     tab = "contracts"
   end
@@ -103,6 +115,53 @@ CS_UNDO = Stack{Dict{String,Any}}()
     end
   end
 
+  @onchange prompt_create_contract begin
+    @info "prompt_create_contract pressed"
+    @show prompt_create_contract
+    if !prompt_create_contract
+      activetxn = true
+      w1 = Workflow(
+        type_of_entity="Contract",
+        tsw_validfrom=ref_time,
+        tsdb_validfrom=now(tz"UTC")
+      )
+      create_entity!(w1)
+      c = Contract()
+      cr = ContractRevision(description="contract creation properties")
+      @info "before create component"
+      create_component!(c, cr, w1)
+      @info "after create component"
+      current_workflow = w1
+      current_contract = c
+
+      histo = map(convert, LifeInsuranceDataModel.history_forest(current_contract.ref_history.value).shadowed)
+      cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, now(tz"UTC"), ref_time, 1)))
+      cs["loaded"] = "true"
+      push!(__model__)
+    end
+  end
+  @onchange new_product_reference begin
+    @show new_product_reference
+    if new_product_reference > 0
+      @show current_workflow
+      prs0 = prsection(1, now(tz"UTC"), now(tz"UTC"))
+      tpidrolemap = Dict(1 => 1, 2 => 1)
+      partnerrolemap::Dict{Integer,PartnerSection} = Dict()
+      for key in keys(tpidrolemap)
+        partnerrolemap[key] = psection(tpidrolemap[key], now(tz"UTC"), now(tz"UTC"))
+      end
+      @info "before instantiation"
+      pis = instantiate_product(prs0, partnerrolemap)
+      @info "productitem created"
+      pisj = JSON.parse(JSON.json(pis))
+      @show pisj
+      cs["product_items"] = [pisj]
+      @show cs["product_items"]
+      push!(__model__)
+    end
+
+  end
+
   @onchange selected_contract_idx begin
     if (selected_contract_idx >= 0)
       @show "selected_contract_idx"
@@ -121,6 +180,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
           histo = map(convert, LifeInsuranceDataModel.history_forest(current_contract.ref_history.value).shadowed)
           cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
           cs["loaded"] = "true"
+          new_product_reference = 0
         else
           ref_time = now(tz"UTC")
           histo = map(convert, LifeInsuranceDataModel.history_forest(current_contract.ref_history.value).shadowed)
@@ -200,7 +260,6 @@ CS_UNDO = Stack{Dict{String,Any}}()
     end
   end
 
-
   @onchange selected_contractpartner_idx begin
     if selected_contractpartner_idx != -1
       @show selected_contractpartner_idx
@@ -224,7 +283,10 @@ CS_UNDO = Stack{Dict{String,Any}}()
 
       try
         @show command
-
+        if command == "clear contract"
+          current_contract = Contract()
+          cs = Dict{String,Any}("loaded" => "false")
+        end
         if command == "add productitem"
           @show command
           command = ""
@@ -245,23 +307,6 @@ CS_UNDO = Stack{Dict{String,Any}}()
           @info length(cs["partner_refs"])
           push!(__model__)
           command = ""
-        end
-        if command == "create contract"
-          activetxn = true
-          w1 = Workflow(
-            type_of_entity="Contract",
-            tsw_validfrom=ref_time,
-          )
-          create_entity!(w1)
-          c = Contract()
-          cr = ContractRevision(description="contract creation properties")
-          create_component!(c, cr, w1)
-          current_workflow = w1
-          current_contract = c
-          @show command
-          command = ""
-          tab = ""
-          tab = "contracts"
         end
 
         if command == "start transaction"
@@ -381,9 +426,10 @@ CS_UNDO = Stack{Dict{String,Any}}()
         if command == "rollback"
           @show command
           @show current_workflow
+
           rollback_workflow!(current_workflow)
           activetxn = 0
-          current_workflow = Workflow()
+          command = "clear contract"
         end
         command = ""
       catch err
@@ -462,6 +508,35 @@ CS_UNDO = Stack{Dict{String,Any}}()
     @info "leave tab handler"
   end
 end
+
+"""
+function definitions
+"""
+
+"""
+instantiate_product(prs::ProductSection, prrolemap::Dict{Integer,Integer})::ProductItemSection
+
+  derive a product item from a product id and a map from role ids to partner ids
+  interpreting product data 
+
+"""
+
+
+function instantiate_product(prs::ProductSection, partnerrolemap::Dict{Integer,PartnerSection})
+  ts = map(prs.parts) do pt
+    let tiprs = map(pt.ref.partner_roles) do r
+        TariffItemPartnerReference(rev=TariffItemPartnerRefRevision(ref_role=r.ref_role.value),
+          ref=partnerrolemap[r.ref_role.value])
+      end
+      tir = TariffItemRevision(ref_role=pt.revision.ref_role, ref_tariff=pt.revision.ref_tariff)
+      titr = TariffItemTariffReference(ref=pt.ref, rev=tir)
+      TariffItemSection(tariff_ref=titr, partner_refs=tiprs)
+    end
+  end
+  pir = ProductItemRevision(ref_product=prs.revision.ref_component)
+  ProductItemSection(revision=pir, tariff_items=ts)
+end
+
 
 """
 convert(node::BitemporalPostgres.Node)::Dict{String,Any}
