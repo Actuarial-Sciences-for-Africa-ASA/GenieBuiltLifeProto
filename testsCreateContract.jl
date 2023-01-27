@@ -17,7 +17,6 @@ using JSON
 if (haskey(ENV, "GITPOD_REPO_ROOT"))
     run(```psql -f sqlsnippets/droptables.sql```)
 elseif (haskey(ENV, "GENIE_ENV") & (ENV["GENIE_ENV"] == "dev"))
-
     run(```psql -d postgres -f sqlsnippets/droptables.sql```)
 end
 # Loading the data model- Create tables, constraints etc. and load Roles
@@ -59,21 +58,6 @@ LifeInsuranceDataModel.load_model()
     commit_workflow!(w)
 
     Partner1 = p.id.value
-    # Create tariffs
-
-    # create Tariffs
-    function create_tariff(dsc, mt)
-        t = LifeInsuranceDataModel.Tariff()
-        tr = LifeInsuranceDataModel.TariffRevision(description=dsc, mortality_table=mt)
-        w = Workflow(
-            type_of_entity="Tariff",
-            tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
-        )
-        create_entity!(w)
-        create_component!(t, tr, w)
-        commit_workflow!(w)
-        t.id.value
-    end
 
     LifeRiskTariff = create_tariff("Life Risk Insurance", "1980 CET - Male Nonsmoker, ANB")
     TerminalIllnessTariff = create_tariff(
@@ -91,6 +75,7 @@ LifeInsuranceDataModel.load_model()
     LifeRiskTariff2 = create_tariff(
         "Life Risk Insurance",
         "2001 VBT Residual Standard Select and Ultimate - Male Nonsmoker, ANB",
+        "Insured Person", "2nd Insured Person",
     )
 
     find(TariffRevision)
@@ -126,6 +111,7 @@ LifeInsuranceDataModel.load_model()
     create_subcomponent!(p, pp2, ppr2, w0)
     commit_workflow!(w0)
 
+    
     LifeRiskProduct = p.id.value
     println(LifeRiskProduct)
 
@@ -193,8 +179,38 @@ LifeInsuranceDataModel.load_model()
     LifeRiskTIODProduct = p.id.value
     println(LifeRiskTIODProduct)
 
+# create 2 life product
+Life2RiskProduct = p.id.value
+    println(Life2RiskProduct)
+
+    p = Product()
+    pr = ProductRevision(description="2 Life Risk - Terminal Illness")
+
+    pp = ProductPart()
+    ppr = ProductPartRevision(
+        ref_tariff=LifeRiskTariff2,
+        ref_role=ppRole["Main Coverage - Life"],
+        description="Main Coverage - Life",
+    )
+
+    
+
+
+
+    w0 = Workflow(
+        type_of_entity="Product",
+        tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
+    )
+    create_entity!(w0)
+    create_component!(p, pr, w0)
+    create_subcomponent!(p, pp, ppr, w0)
+    commit_workflow!(w0)
+
+    Life2RiskProduct = p.id.value
+    println(Life2RiskProduct)
     # Testing
 
+    
     # Create contract blue
 
     w1 = Workflow(
@@ -295,6 +311,22 @@ LifeInsuranceDataModel.load_model()
 
 end # testset create contract
 
+@testset "get_typeof methods" begin
+    t = ContractRevision
+    @test get_typeof_revision(get_typeof_component(t())()) == t
+    t = TariffItemRevision
+    @test get_typeof_revision(get_typeof_component(t())()) == t
+end
+
+@testset "get_typeof methods" begin
+    for t in [ContractRevision, ContractPartnerRefRevision, ProductItemRevision, TariffItemRevision, TariffItemPartnerRefRevision]
+
+        @test get_typeof_revision(get_typeof_component(t())()) == t
+    end
+end
+
+
+
 using BitemporalPostgres, SearchLight
 history = 9
 txntime = MaxDate
@@ -347,3 +379,44 @@ valints = find(ValidityInterval)
 
 
 vi = valints[1]
+
+# Create 2 Life contract 
+
+    w1 = Workflow(
+        type_of_entity="Contract",
+        tsw_validfrom=ZonedDateTime(2014, 5, 30, 21, 0, 1, 1, tz"UTC"),
+    )
+
+    create_entity!(w1)
+    c = Contract()
+    cr = ContractRevision(description="contract creation properties")
+    create_component!(c, cr, w1)
+
+    cpr = ContractPartnerRef(ref_super=c.id)
+    cprr = ContractPartnerRefRevision(
+        ref_partner=Partner1,
+        ref_role=cpRole["Policy Holder"],
+        description="policiyholder ref properties",
+    )
+    create_subcomponent!(c, cpr, cprr, w1)
+    # pi 1
+    
+    PartnerRole = tiprRole["Insured Person"]
+    PartnerRole2 = tiprRole["2nd Insured Person"]
+
+    cpi = ProductItem(ref_super=c.id)
+    cpir = ProductItemRevision(
+        ref_product=Life2RiskProduct,
+        description="from contract creation",
+    )
+    create_subcomponent!(c, cpi, cpir, w1)
+
+    LifeInsuranceDataModel.create_product_instance(
+        w1,
+        cpi,
+        LifeRiskTIODProduct,
+        Partner1,
+        PartnerRole,
+        PartnerRole2
+    )
+    commit_workflow!(w1)

@@ -61,7 +61,7 @@
                         </q-input>
                     </div>
                     <div class="col">
-                        <q-input bg-color="white" label="date of birthh" v-model="ps['revision']['date_of_birth']">
+                        <q-input bg-color="white" label="date of birth" v-model="ps['revision']['date_of_birth']">
                         </q-input>
                     </div>
                 </div>
@@ -91,23 +91,37 @@
                     </div>partner
                     <div class="text-h2 text-white">{{prs['revision']['description']}}</div>
                 </q-card-section>
-                <div id="ihe7x" class="q-pa-md">
+                <div id="ihe7x" class="q-mt-md">
                     <q-list dense="" bordered="" padding="" class="rounded-borders">
                         <q-item clickable="" v-ripple="" v-on:click="selected_product_part_idx=ppindex"
                             v-for="(ppid,ppindex) in prs['parts']">
                             <q-item-section>
+                                <p>product part description</p>
                                 {{ppid['revision']['description']}}
                             </q-item-section>
                             <q-item-section>
-                                tariff id
+                                <p>tariff id</p>
                                 {{ppid['ref']['revision']['ref_component']['value']}}
                             </q-item-section>
                             <q-item-section>
-                                description {{ppid['ref']['revision']['description']}}
+                                <p>tariff description</p> {{ppid['ref']['revision']['description']}}
                             </q-item-section>
                             <q-item-section>
-                                Mortality Table {{ppid['ref']['revision']['mortality_table']}}
+                                <p>Mortality Table</p>
+                                {{ppid['ref']['revision']['mortality_table']}}
                             </q-item-section>
+                            <q-item-section>
+                                <q-list dense="" bordered="" padding="" class="rounded-borders">
+                                    <q-item>
+                                        <p>Partner Roles</p>
+                                    </q-item><q-item clickable="" v-ripple=""
+                                        v-for="tprole in ppid['ref']['partner_roles']">
+                                        <q-item-section>
+                                            {{rolesTariffItemPartner[tprole['ref_role']['value']-1]['label']}}
+                                        </q-item-section>
+                                </q-list>
+                            </q-item-section>
+
                         </q-item>
                     </q-list>
                 </div>
@@ -233,30 +247,23 @@
                 </q-expansion-item>
                 <hr />
                 <q-expansion-item label="product items" class="q-mt-md q-mr-sm bg-deep-purple-8 text-white">
-                    {{tpidrolemap}}
-                    <div class="col">
-                        <q-select bg-color="white" label="ref_product sel" v-model="new_product_reference"
-                            :options="product_ids" emit-value v-if="activetxn && cs['product_items'].length==0">
-                        </q-select>
+                    <q-select bg-color="white" label="referenced product" v-model="new_product_reference"
+                        :options="product_ids" emit-value v-if="activetxn && cs['product_items'].length==0">
+                    </q-select>
+                    <div v-for="role in Object.keys(productpartnerroles2)">
+                        <div class="row">
+                            <div class="col">
+                                {{rolesTariffItemPartner[role-1]['label']}} </div>
+                            <div class="col">
+                                <q-select bg-color="white" v-model="productpartnerroles2[role]" :options="partner_ids"
+                                    emit-value </q-select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col">
-                        <q-select bg-color="white" label="tarifitem_partner_role sel"
-                            v-model="new_tariffitem_partner_role" :options="rolesTariffItemPartner" emit-value
-                            map-options v-if="new_product_reference>0">
-                        </q-select>
-                    </div>
-                    <div class="col">
-                        <q-select bg-color="white" label="tarifitem_partner_ref_sel" v-model="new_tariffitem_partner"
-                            :options="partner_ids" emit-value map-options v-if="new_tariffitem_partner_role>0">
-                        </q-select>
-                    </div>
-                    <div class="col">
-                        <q-btn label="add" v-on:click="command='add productitem'" v-if="activetxn"></q-btn>
-                    </div>
+                    <q-btn label="add" v-on:click="command='add productitem'" v-if="activetxn"></q-btn>
                     <div v-for="(pi,piidx) in cs['product_items']" class="q-pa-md">
                         <div class="q-pa-md">
-                            <q-btn label="delete" v-on:click="selected_productitem_idxlected_productitem_idx=piidx"
-                                v-if="activetxn">
+                            <q-btn label="delete" v-on:click="selected_productitem_idx=piidx" v-if="activetxn">
                             </q-btn>
                         </div>
                         <div class="row">

@@ -28,8 +28,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @in new_contract_partner::Integer = 0
   @in selected_contractpartner_idx::Integer = -1
   @in selected_productitem_idx::Integer = -1
-  @in new_tariffitem_partner_role::Integer = 0
-  @in new_tariffitem_partner::Integer = 0
+  @in new_tariffitem_partner::Dict{Integer,Integer} = Dict()
   @in selected_version::String = ""
   @out current_version::Integer = 0
   @out txn_time::ZonedDateTime = now(tz"UTC")
@@ -46,6 +45,9 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @in show_contract_partners::Bool = false
   @in show_product_items::Bool = false
   @in new_product_reference::Integer = 0
+  @out productpartnerroles::Vector{Integer} = []
+  @in productpartnerroles2::Dict{Integer,Integer} = Dict()
+  @out partnerrolemap::Dict{Integer,PartnerSection} = Dict()
   @out tpidrolemap::Dict{Integer,Integer} = Dict{Integer,Integer}()
   @in show_tariff_item_partners::Bool = false
   @in show_tariff_items::Bool = false
@@ -144,22 +146,39 @@ CS_UNDO = Stack{Dict{String,Any}}()
     @show new_product_reference
     if new_product_reference > 0
       @show current_workflow
-      prs0 = prsection(1, now(tz"UTC"), now(tz"UTC"))
-      tpidrolemap = Dict(1 => 1, 2 => 1)
-      partnerrolemap::Dict{Integer,PartnerSection} = Dict()
-      for key in keys(tpidrolemap)
-        partnerrolemap[key] = psection(tpidrolemap[key], now(tz"UTC"), now(tz"UTC"))
+      prs0 = prsection(new_product_reference, now(tz"UTC"), now(tz"UTC"))
+      @show prs0
+      productpartnerroles2 = Dict()
+
+      map(prs0.parts) do pt
+        for r in pt.ref.partner_roles
+          if !(r.ref_role.value in productpartnerroles)
+            append!(productpartnerroles, r.ref_role.value)
+            productpartnerroles2[r.ref_role.value] = 0
+          end
+        end
       end
-      @info "before instantiation"
-      pis = instantiate_product(prs0, partnerrolemap)
-      @info "productitem created"
-      pisj = JSON.parse(JSON.json(pis))
-      @show pisj
-      cs["product_items"] = [pisj]
-      @show cs["product_items"]
+      @show productpartnerroles
+      # partnerrolemap::Dict{Integer,PartnerSection} = Dict()
+      # for key in roles
+      #   partnerrolemap[key] = psection(tpidrolemap[key], now(tz"UTC"), now(tz"UTC"))
+      # end
+      # @show partnerrolemap
+      #@info "before instantiation"
+      #pis = instantiate_product(prs0, partnerrolemap)
+      #@info "productitem created"
+      #pisj = JSON.parse(JSON.json(pis))
+      #@show pisj
+      #cs["product_items"] = [pisj]
+      #@show cs["product_items"]
       push!(__model__)
     end
 
+  end
+
+  @onchange productpartnerroles2 begin
+    @info "productpartnerroles2 1"
+    @show productpartnerroles2
   end
 
   @onchange selected_contract_idx begin
@@ -289,6 +308,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
         end
         if command == "add productitem"
           @show command
+          @show productpartnerroles2
           command = ""
         end
         if command == "add contractpartner"
@@ -494,6 +514,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
     end
     if (tab == "products")
       products = LifeInsuranceDataModel.get_products()
+      push!(__model__)
       @info "read products"
     end
     if (tab == "csection")
