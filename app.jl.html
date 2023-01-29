@@ -248,19 +248,20 @@
                 <hr />
                 <q-expansion-item label="product items" class="q-mt-md q-mr-sm bg-deep-purple-8 text-white">
                     <q-select bg-color="white" label="referenced product" v-model="new_product_reference"
-                        :options="product_ids" emit-value v-if="activetxn && cs['product_items'].length==0">
+                        :options="product_ids" emit-value map-options v-if="activetxn && cs['product_items'].length==0">
                     </q-select>
-                    <div v-for="role in Object.keys(productpartnerroles2)">
+                    <div v-for="role in Object.keys(productpartnerroles)">
                         <div class="row">
                             <div class="col">
                                 {{rolesTariffItemPartner[role-1]['label']}} </div>
                             <div class="col">
-                                <q-select bg-color="white" v-model="productpartnerroles2[role]" :options="partner_ids"
-                                    emit-value </q-select>
+                                <q-select bg-color="white" v-model="productpartnerroles[role]" :options="partner_ids"
+                                    emit-value map-options</q-select>
                             </div>
                         </div>
                     </div>
-                    <q-btn label="add" v-on:click="command='add productitem'" v-if="activetxn"></q-btn>
+                    <q-btn label="add" v-on:click="command='add productitem'"
+                        v-if="Object.values(productpartnerroles).length >0 && !Object.values(productpartnerroles).includes(0)"></q-btn>
                     <div v-for="(pi,piidx) in cs['product_items']" class="q-pa-md">
                         <div class="q-pa-md">
                             <q-btn label="delete" v-on:click="selected_productitem_idx=piidx" v-if="activetxn">

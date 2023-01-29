@@ -39,14 +39,15 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @out cs_persisted = Dict{String,Any}()
   @out ps::Dict{String,Any} = Dict{String,Any}("loaded" => "false")
   @out prs::Dict{String,Any} = Dict{String,Any}("loaded" => "false")
+  @out prs0::ProductSection = ProductSection()
+
   @in selected_product_part_idx::Integer = 0
   @in tab::String = "csection"
   @in leftDrawerOpen::Bool = false
   @in show_contract_partners::Bool = false
   @in show_product_items::Bool = false
   @in new_product_reference::Integer = 0
-  @out productpartnerroles::Vector{Integer} = []
-  @in productpartnerroles2::Dict{Integer,Integer} = Dict()
+  @in productpartnerroles::Dict{String,Integer} = Dict()
   @out partnerrolemap::Dict{Integer,PartnerSection} = Dict()
   @out tpidrolemap::Dict{Integer,Integer} = Dict{Integer,Integer}()
   @in show_tariff_item_partners::Bool = false
@@ -67,14 +68,16 @@ CS_UNDO = Stack{Dict{String,Any}}()
     prs = Dict{String,Any}("loaded" => "false")
     ps = Dict{String,Any}("loaded" => "false")
     partners = LifeInsuranceDataModel.get_partners()
-    partner_ids = map(partners) do p
-      Dict("value" => p.id.value, "label" => "hansi")
-    end
 
+    partner_ids = map(partners) do p
+      Dict("value" => p.id.value, "label" => get_revision(Partner, PartnerRevision, p.ref_history, p.ref_version).description)
+    end
+    push!(partner_ids, Dict("value" => 0, "label" => "nobody"))
     for p in LifeInsuranceDataModel.get_products()
       rev = LifeInsuranceDataModel.prsection(p.id.value, now(tz"UTC"), now(tz"UTC"), 0).revision
       push!(product_ids, Dict("label" => rev.description, "value" => rev.id.value))
     end
+    push!(product_ids, Dict("label" => "none", "value" => 0))
 
     push!(__model__)
     @show partner_ids
@@ -82,6 +85,12 @@ CS_UNDO = Stack{Dict{String,Any}}()
     @show "App is loaded"
     tab = "contracts"
   end
+
+  """
+  @onchange prompt_new_txn 
+  starting a new txn on the current contract
+  """
+
   @onchange prompt_new_txn begin
     @info "prompt_new_txn pressed"
     @show prompt_new_txn
@@ -117,6 +126,11 @@ CS_UNDO = Stack{Dict{String,Any}}()
     end
   end
 
+  """
+  @onchange prompt_create_contract 
+  creating a new contract whereby a txn on the new  contract is started
+  """
+
   @onchange prompt_create_contract begin
     @info "prompt_create_contract pressed"
     @show prompt_create_contract
@@ -142,43 +156,34 @@ CS_UNDO = Stack{Dict{String,Any}}()
       push!(__model__)
     end
   end
+
+  """
+  @onchange new_product_reference
+  select a product reference for the first product item productpartnerroles is initialized for the selected product 
+  """
+
   @onchange new_product_reference begin
     @show new_product_reference
     if new_product_reference > 0
       @show current_workflow
-      prs0 = prsection(new_product_reference, now(tz"UTC"), now(tz"UTC"))
+      prs0 = prsection(new_product_reference, now(tz"UTC"), ref_time)
       @show prs0
-      productpartnerroles2 = Dict()
+      productpartnerroles = Dict()
 
       map(prs0.parts) do pt
         for r in pt.ref.partner_roles
-          if !(r.ref_role.value in productpartnerroles)
-            append!(productpartnerroles, r.ref_role.value)
-            productpartnerroles2[r.ref_role.value] = 0
-          end
+          productpartnerroles[string(r.ref_role.value)] = 0
         end
       end
       @show productpartnerroles
-      # partnerrolemap::Dict{Integer,PartnerSection} = Dict()
-      # for key in roles
-      #   partnerrolemap[key] = psection(tpidrolemap[key], now(tz"UTC"), now(tz"UTC"))
-      # end
-      # @show partnerrolemap
-      #@info "before instantiation"
-      #pis = instantiate_product(prs0, partnerrolemap)
-      #@info "productitem created"
-      #pisj = JSON.parse(JSON.json(pis))
-      #@show pisj
-      #cs["product_items"] = [pisj]
-      #@show cs["product_items"]
       push!(__model__)
     end
 
   end
 
-  @onchange productpartnerroles2 begin
-    @info "productpartnerroles2 1"
-    @show productpartnerroles2
+  @onchange productpartnerroles begin
+    @info "productpartnerroles"
+    @show productpartnerroles
   end
 
   @onchange selected_contract_idx begin
@@ -302,13 +307,38 @@ CS_UNDO = Stack{Dict{String,Any}}()
 
       try
         @show command
+        """
+        command clear contract
+        """
+
         if command == "clear contract"
           current_contract = Contract()
           cs = Dict{String,Any}("loaded" => "false")
         end
+        """
+        command add productitem
+        """
         if command == "add productitem"
           @show command
-          @show productpartnerroles2
+          @show productpartnerroles
+          @show values(productpartnerroles)
+          @show 0 in values(productpartnerroles)
+          partnerrolemap::Dict{Integer,PartnerSection} = Dict()
+          for keystr in keys(productpartnerroles)
+            key = parse(Int, keystr)
+            println
+            partnerrolemap[key] = psection(productpartnerroles[keystr], now(tz"UTC"), ref_time)
+
+          end
+          @show partnerrolemap
+          @info "before instantiation"
+          pis = instantiate_product(prs0, partnerrolemap)
+          @info "productitem created"
+          pisj = JSON.parse(JSON.json(pis))
+          @show pisj
+          cs["product_items"] = [pisj]
+          @show cs["product_items"]
+          push!(__model__)
           command = ""
         end
         if command == "add contractpartner"
