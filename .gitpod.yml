@@ -4,7 +4,7 @@ tasks:
   - init: echo 'PATH_add /home/gitpod/julia-1.8.2/bin' > /workspace/.envrc \
           && echo 'PATH_add ~/julia-1.8.2/bin' > /workspace/.envrc \
           && echo 'export SEARCHLIGHT_USERNAME="gitpod"' >> /workspace/.envrc \
-          && direnv allow /workspace
+          && direnv allow /workspace \
           && cp /workspace/.envrc /home/gitpod \
           && direnv allow /home/gitpod
 
