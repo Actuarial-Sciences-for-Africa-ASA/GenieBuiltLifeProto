@@ -47,7 +47,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @in show_contract_partners::Bool = false
   @in show_product_items::Bool = false
   @in new_product_reference::Integer = 0
-  @in productpartnerroles::Dict{String,Integer} = Dict()
+  @in productpartnerroles::Dict{Integer,Integer} = Dict()
   @out partnerrolemap::Dict{Integer,PartnerSection} = Dict()
   @out tpidrolemap::Dict{Integer,Integer} = Dict{Integer,Integer}()
   @in show_tariff_item_partners::Bool = false
@@ -79,13 +79,16 @@ CS_UNDO = Stack{Dict{String,Any}}()
     end
     push!(product_ids, Dict("label" => "none", "value" => 0))
 
-    push!(__model__)
+    @push
     @show partner_ids
     @show product_ids
     @show "App is loaded"
     tab = "contracts"
   end
 
+  @onchange cs begin
+    @info "cs changed"
+  end
   """
   @onchange prompt_new_txn 
   starting a new txn on the current contract
@@ -153,7 +156,11 @@ CS_UNDO = Stack{Dict{String,Any}}()
       histo = map(convert, LifeInsuranceDataModel.history_forest(current_contract.ref_history.value).shadowed)
       cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, now(tz"UTC"), ref_time, 1)))
       cs["loaded"] = "true"
-      push!(__model__)
+      cs_persisted = deepcopy(cs)
+      @info "cs==cs_persisted?"
+      @show cs == cs_persisted
+      push!(CS_UNDO, cs_persisted)
+      @push
     end
   end
 
@@ -172,11 +179,11 @@ CS_UNDO = Stack{Dict{String,Any}}()
 
       map(prs0.parts) do pt
         for r in pt.ref.partner_roles
-          productpartnerroles[string(r.ref_role.value)] = 0
+          productpartnerroles[r.ref_role.value] = 0
         end
       end
       @show productpartnerroles
-      push!(__model__)
+      @push
     end
 
   end
@@ -224,7 +231,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
           tistruct = ToStruct.tostruct(LifeInsuranceDataModel.TariffItemSection, ti)
           LifeInsuranceProduct.calculate!(tistruct)
           cs["product_items"][1]["tariff_items"][1] = JSON.parse(JSON.json(tistruct))
-          push!(__model__)
+          @push
           @info("calculated")
           @show cs["loaded"]
           @info (cs["product_items"][1]["tariff_items"][1]["tariff_ref"]["rev"]["annuity_immediate"])
@@ -297,11 +304,6 @@ CS_UNDO = Stack{Dict{String,Any}}()
     end
   end
 
-  @onchange cs begin
-    @info "contract structure modified"
-    @show cs
-  end
-
   @onchange command begin
     if command != ""
 
@@ -324,11 +326,8 @@ CS_UNDO = Stack{Dict{String,Any}}()
           @show values(productpartnerroles)
           @show 0 in values(productpartnerroles)
           partnerrolemap::Dict{Integer,PartnerSection} = Dict()
-          for keystr in keys(productpartnerroles)
-            key = parse(Int, keystr)
-            println
-            partnerrolemap[key] = psection(productpartnerroles[keystr], now(tz"UTC"), ref_time)
-
+          for key in keys(productpartnerroles)
+            partnerrolemap[key] = psection(productpartnerroles[key], now(tz"UTC"), ref_time)
           end
           @show partnerrolemap
           @info "before instantiation"
@@ -338,7 +337,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
           @show pisj
           cs["product_items"] = [pisj]
           @show cs["product_items"]
-          push!(__model__)
+          @push
           command = ""
         end
         if command == "add contractpartner"
@@ -355,7 +354,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
           @show cs["partner_refs"]
           @info "anzahl prefs= "
           @info length(cs["partner_refs"])
-          push!(__model__)
+          @push
           command = ""
         end
 
@@ -370,12 +369,13 @@ CS_UNDO = Stack{Dict{String,Any}}()
           current_workflow = w1
           cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
           cs["loaded"] = "true"
-          push!(__model__)
+          @push
           @show command
           command = ""
 
         end
 
+        # TODO what's this?
         #if isnothing(cs["partner_refs"][idx+1]["rev"]["id"]["value"])
         #  deleteat!(cs["partner_refs"], idx + 1)
         #  @info "after delete new cp"
@@ -388,8 +388,6 @@ CS_UNDO = Stack{Dict{String,Any}}()
         if startswith(command, "delete_contract_partner")
 
           @show command
-
-
           @show first(CS_UNDO)["partner_refs"]
           idx = parse(Int64, chopprefix(command, "delete_contract_partner:"))
 
@@ -402,14 +400,14 @@ CS_UNDO = Stack{Dict{String,Any}}()
             @show cs["partner_refs"][idx+1]["rev"]
             @info "after delete persisted cp"
           end
-          push!(__model__)
+          @push
         end
 
         if command == "pop"
           @info "before pop"
           @show first(CS_UNDO)["partner_refs"]
           cs = pop!(CS_UNDO)
-          push!(__model__)
+          @push
           @info "after pop"
           @show cs["partner_refs"]
         end
@@ -418,53 +416,23 @@ CS_UNDO = Stack{Dict{String,Any}}()
           push!(CS_UNDO, deepcopy(cs))
           @show first(CS_UNDO)["partner_refs"]
         end
-
-        if command == "persist"
+        if command == "compare"
           @show command
           @show cs_persisted
           deltas = compareModelStateContract(cs_persisted, cs, current_workflow)
           @info "showing deltas"
           @show deltas
-          @info "ende deltas"
-          for delta in deltas
-            prev = delta[1]
-            curr = delta[2]
-            if !isnothing(prev) # component is not new, db identity has been set 
-              @info "preexisting component"
-              @show curr.ref_invalidfrom.value
-              @show prev.ref_invalidfrom.value
-              @show current_workflow.ref_version.value
-              @show curr.ref_invalidfrom.value == current_workflow.ref_version.value
-              if curr.ref_invalidfrom.value == current_workflow.ref_version.value # component has just been deleted 
-                @info "deleting component"
-                @show curr
-                delete_component!(curr, current_workflow)
-              else
-                @info "comparing component"
-                update_component!(prev, curr, current_workflow)
-              end
-            else
-              @info("new component ")
-              @show curr
-              @info "Type is" * string(typeof(curr))
-              ct = get_typeof_component(curr)
-              @show ct
-              @info "Component Type is" * string(ct)
-              # ContractPartnerRef
-              # Workflow
-              @show current_workflow.ref_history
-              @show current_workflow.ref_version
-              @show current_contract.id
-              currc = ct(ref_history=current_workflow.ref_history, ref_version=current_workflow.ref_version,
-                ref_super=current_contract.id)
-              @show currc
-              create_component!(currc, curr, current_workflow)
 
-            end
-          end
-          cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, txn_time, ref_time, activetxn ? 1 : 0)))
+        end
+
+        if command == "persist"
+          @show command
+          @show cs_persisted
+          persistModelStateContract(cs_persisted, cs, current_workflow, current_contract)
+
+          cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, txn_time, ref_time, 1)))
           cs["loaded"] = "true"
-          push!(__model__)
+          @push
         end
         if command == "commit"
           @show command
@@ -544,7 +512,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
     end
     if (tab == "products")
       products = LifeInsuranceDataModel.get_products()
-      push!(__model__)
+      @push
       @info "read products"
     end
     if (tab == "csection")
@@ -563,31 +531,6 @@ end
 """
 function definitions
 """
-
-"""
-instantiate_product(prs::ProductSection, prrolemap::Dict{Integer,Integer})::ProductItemSection
-
-  derive a product item from a product id and a map from role ids to partner ids
-  interpreting product data 
-
-"""
-
-
-function instantiate_product(prs::ProductSection, partnerrolemap::Dict{Integer,PartnerSection})
-  ts = map(prs.parts) do pt
-    let tiprs = map(pt.ref.partner_roles) do r
-        TariffItemPartnerReference(rev=TariffItemPartnerRefRevision(ref_role=r.ref_role.value),
-          ref=partnerrolemap[r.ref_role.value])
-      end
-      tir = TariffItemRevision(ref_role=pt.revision.ref_role, ref_tariff=pt.revision.ref_tariff)
-      titr = TariffItemTariffReference(ref=pt.ref, rev=tir)
-      TariffItemSection(tariff_ref=titr, partner_refs=tiprs)
-    end
-  end
-  pir = ProductItemRevision(ref_product=prs.revision.ref_component)
-  ProductItemSection(revision=pir, tariff_items=ts)
-end
-
 
 """
 convert(node::BitemporalPostgres.Node)::Dict{String,Any}
@@ -679,6 +622,14 @@ function compareModelStateContract(previous::Dict{String,Any}, current::Dict{Str
         end
       end
     end
+  end
+  @info "comparing product items"
+  for i in 1:length(current["product_items"])
+    @show current["product_items"]
+    curr = current["product_items"][i]["revision"]
+    @info "current pref rev"
+    @show curr
+
   end
   @info "final DIFF"
   @show diff
