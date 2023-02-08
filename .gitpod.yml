@@ -4,7 +4,13 @@ tasks:
   - init: echo 'PATH_add /home/gitpod/julia-1.8.2/bin' > /workspace/.envrc \
           && echo 'PATH_add ~/julia-1.8.2/bin' > /workspace/.envrc \
           && echo 'export SEARCHLIGHT_USERNAME="gitpod"' >> /workspace/.envrc \
-          && direnv allow /workspace
+          && direnv allow /workspace \
+          && cp /workspace/.envrc /home/gitpod \
+          && direnv allow /home/gitpod
+
+  - command:  julia --startup-file=no --depwarn=no /workspace/.vscode-remote/extensions/geniebuilder.geniebuilder-insider-0.3.1-universal/scripts/updategb.jl \
+              && cd /home/gitpod/.julia/geniebuilder/apps \
+              && git clone https://github.com/michaelfliegner/GenieBuildLifeProto
           
   - command: julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate();include("testsCreateContract.jl")'
 ports:
@@ -14,9 +20,4 @@ ports:
     visibility: private
     onOpen: ignore
 
-  - name: Web App
-    description: The main application web server
-    port: 8000
-    visibility: public
-    onOpen: open-browser
 
