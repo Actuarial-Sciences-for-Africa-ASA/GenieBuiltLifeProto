@@ -1,7 +1,9 @@
 image:
   file: .gitpod.Dockerfile
 tasks:
-  - init: julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate();include("testsCreateContract.jl")'
+  - init: export PATH=$PATH:/home/gitpod/julia-1.8.2/bin/ \
+          && julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate();include("testsCreateContract.jl")' \
+          && cp /home/gitpod/.envrc /workspace 
 
 ports:
   - name: postgres
