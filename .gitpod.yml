@@ -1,7 +1,7 @@
 image:
   file: .gitpod.Dockerfile
 tasks:
-  - init: bjulia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate();include("testsCreateContract.jl")' 
+  - init: julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate();include("testsCreateContract.jl")' 
 
 ports:
   - name: postgres
