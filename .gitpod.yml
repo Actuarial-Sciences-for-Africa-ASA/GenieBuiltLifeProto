@@ -1,7 +1,7 @@
 image:
   file: .gitpod.Dockerfile
 tasks:
-  - init: cp /home/gitpod/.envrc /workspace \
+  - init: cp /home/gitpod/.envrc "$GITPOD_REPO_ROOT" \
           && julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate();include("testsCreateContract.jl")'
 
 ports:
