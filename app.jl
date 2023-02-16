@@ -4,6 +4,8 @@ using GenieFramework
 using BitemporalPostgres, DataStructures, JSON, LifeInsuranceDataModel, LifeInsuranceProduct, SearchLight, TimeZones, ToStruct
 @genietools
 
+include("treeedit.jl")
+
 CS_UNDO = Stack{Dict{String,Any}}()
 
 @handlers begin
@@ -52,6 +54,8 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @out tpidrolemap::Dict{Integer,Integer} = Dict{Integer,Integer}()
   @in show_tariff_item_partners::Bool = false
   @in show_tariff_items::Bool = false
+  @out d::Dict{String,Any} = deepcopy(testdict)
+  @in tree::Vector{Dict{Symbol,Any}} = [dict_tree(testdict)]
   @out rolesContractPartner::Vector{Dict{String,Any}} = []
   @out rolesTariffItem::Vector{Dict{String,Any}} = []
   @out rolesTariffItemPartner::Vector{Dict{String,Any}} = []
