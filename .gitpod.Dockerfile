@@ -9,6 +9,4 @@ RUN sudo apt-get update && sudo apt-get install -y direnv \
   && echo '[whitelist]' > .config/direnv/config.toml \
   && echo 'prefix = [ "/workspace", "/home/gitpod"]' >> .config/direnv/config.toml \
   && echo 'PATH_add /home/gitpod/julia-1.8.2/bin' > /home/gitpod/.envrc \
-  && echo 'export SEARCHLIGHT_USERNAME="gitpod"' >> /home/gitpod/.envrc \
-  && cat /home/gitpod/.envrc > /workspace/.envrc
-  
+  && echo 'export SEARCHLIGHT_USERNAME="gitpod"' >> /home/gitpod/.envrc 
