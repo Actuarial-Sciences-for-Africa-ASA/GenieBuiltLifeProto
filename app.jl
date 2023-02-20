@@ -230,16 +230,16 @@ CS_UNDO = Stack{Dict{String,Any}}()
         @show cs_persisted
         push!(CS_UNDO, cs_persisted)
 
-        if cs["product_items"] != []
-          ti = cs["product_items"][1]["tariff_items"][1]
-          tistruct = ToStruct.tostruct(LifeInsuranceDataModel.TariffItemSection, ti)
-          LifeInsuranceProduct.calculate!(tistruct)
-          cs["product_items"][1]["tariff_items"][1] = JSON.parse(JSON.json(tistruct))
-          @push
-          @info("calculated")
-          @show cs["loaded"]
-          @info (cs["product_items"][1]["tariff_items"][1]["tariff_ref"]["rev"]["annuity_immediate"])
-        end
+        #if cs["product_items"] != []
+        #  ti = cs["product_items"][1]["tariff_items"][1]
+        #  tistruct = ToStruct.tostruct(LifeInsuranceDataModel.TariffItemSection, ti)
+        #  LifeInsuranceProduct.calculate!(tistruct)
+        #  cs["product_items"][1]["tariff_items"][1] = JSON.parse(JSON.json(tistruct))
+        #  @push
+        #  @info("calculated")
+        #  @show cs["loaded"]
+        #  @info (cs["product_items"][1]["tariff_items"][1]["tariff_ref"]["rev"]["annuity_immediate"])
+        #end
         tab = "csection"
         selected_contract_idx = -1
         @info "contract loaded"
@@ -485,9 +485,9 @@ CS_UNDO = Stack{Dict{String,Any}}()
         cs["loaded"] = "true"
         @info "vor tab "
         tab = "csection"
-        ti = LifeInsuranceProduct.calculate!(cs["product_items"][1].tariff_items[1])
-        print("ti=")
-        println(ti)
+        # ti = LifeInsuranceProduct.calculate!(cs["product_items"][1].tariff_items[1])
+        # print("ti=")
+        # println(ti)
       catch err
         println("wassis shief gegangen ")
 
