@@ -284,6 +284,8 @@
                                                 v-model="ti['tariff_ref']['rev']['description']" :readonly="!activetxn">
                                             </q-input>
                                         </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col">
                                             <q-input bg-color="white" label="ref_tariff"
                                                 v-model="ti['tariff_ref']['rev']['ref_tariff']['value']"
@@ -329,6 +331,8 @@
                                                             v-model="tipr['rev']['description']" :readonly="!activetxn">
                                                         </q-input>
                                                     </div>
+                                                </div>
+                                                <div class="row">
                                                     <div class="col">
                                                         <q-select label="ref_role"
                                                             v-model="tipr['rev']['ref_role']['value']" :options="[1,2]"
