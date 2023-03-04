@@ -297,14 +297,15 @@
                                                 <q-input bg-color="white" :label=name type="Number" step="1"
                                                     v-model="def['value']" :rules="[
                                                                         val => (val !== null && val !== '' && parseInt(val)!=NaN) &&  val.indexOf('.')<0 || 'Please type an integer'
-                                                                        ]" :step="1"></q-input>
+                                                                        ]" :step="1" :readonly="!activetxn"></q-input>
                                             </div>
                                             <div class="col" v-else-if="def['type']=='String'">
                                                 <q-input bg-color="white" :label=name type="String" step="1"
-                                                    v-model="def['value']" </q-input>
+                                                    v-model="def['value']" :readonly="!activetxn"></q-input>
                                             </div>
                                             <div class="col" v-else-if="def['type']=='Date'">
-                                                <q-input bg-color="white" :label=name filled v-model="def['value']">
+                                                <q-input bg-color="white" :label=name filled v-model="def['value']"
+                                                    :readonly="!activetxn">
                                                     <q-icon name="event" class="cursor-pointer">
                                                         <q-popup-proxy cover transition-show="scale"
                                                             transition-hide="scale">

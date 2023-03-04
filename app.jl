@@ -111,13 +111,15 @@ CS_UNDO = Stack{Dict{String,Any}}()
         n = replace(newreftime, "/" => "-")
         @show n
         ref_time = ZonedDateTime(DateTime(n), tz"UTC")
-        w1 = Workflow(
+        current_workflow = Workflow(
           type_of_entity="Contract",
           tsw_validfrom=ref_time,
           ref_history=current_contract.ref_history
         )
-        update_entity!(w1)
+        txntime = current_workflow.tsdb_validfrom
+        update_entity!(current_workflow)
         activetxn = true
+
         cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
         cs["loaded"] = "true"
         cs_persisted = deepcopy(cs)
@@ -217,9 +219,9 @@ CS_UNDO = Stack{Dict{String,Any}}()
           cs["loaded"] = "true"
           new_product_reference = 0
         else
-          ref_time = now(tz"UTC")
+          ref_time = MaxDate - Day(1)
           histo = map(convert, LifeInsuranceDataModel.history_forest(current_contract.ref_history.value).shadowed)
-          cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, now(tz"UTC"), now(tz"UTC"), activetxn ? 1 : 0)))
+          cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
           cs["loaded"] = "true"
         end
         @show current_workflow
@@ -230,16 +232,6 @@ CS_UNDO = Stack{Dict{String,Any}}()
         @show cs_persisted
         push!(CS_UNDO, cs_persisted)
 
-        #if cs["product_items"] != []
-        #  ti = cs["product_items"][1]["tariff_items"][1]
-        #  tistruct = ToStruct.tostruct(LifeInsuranceDataModel.TariffItemSection, ti)
-        #  LifeInsuranceProduct.calculate!(tistruct)
-        #  cs["product_items"][1]["tariff_items"][1] = JSON.parse(JSON.json(tistruct))
-        #  @push
-        #  @info("calculated")
-        #  @show cs["loaded"]
-        #  @info (cs["product_items"][1]["tariff_items"][1]["tariff_ref"]["rev"]["annuity_immediate"])
-        #end
         tab = "csection"
         selected_contract_idx = -1
         @info "contract loaded"
@@ -485,9 +477,6 @@ CS_UNDO = Stack{Dict{String,Any}}()
         cs["loaded"] = "true"
         @info "vor tab "
         tab = "csection"
-        # ti = LifeInsuranceProduct.calculate!(cs["product_items"][1].tariff_items[1])
-        # print("ti=")
-        # println(ti)
       catch err
         println("wassis shief gegangen ")
 
@@ -546,7 +535,7 @@ function convert(node::BitemporalPostgres.Node)::Dict{String,Any}
   shdw = length(node.shadowed) == 0 ? [] : map(node.shadowed) do child
     convert(child)
   end
-  Dict("version" => string(i["ref_version"]), "interval" => i, "children" => shdw, "label" => "committed " * string(i["tsdb_validfrom"]) * " valid as of " * string(Date(i["tsworld_validfrom"], UTC)))
+  Dict("version" => string(i["ref_version"]), "interval" => i, "children" => shdw, "icon" => (i["is_committed"] == 1 ? "done" : "pending"), "label" => (i["is_committed"] == 1 ? "committed " : "pending ") * string(i["tsdb_validfrom"]) * " valid as of " * string(Date(i["tsworld_validfrom"], UTC)))
 end
 
 
@@ -562,7 +551,7 @@ function fn(ns::Vector{Dict{String,Any}}, lbl::String)
     else
       if (length(n["children"]) > 0)
         m = fn(n["children"], lbl)
-        if !isnothing((typeof(m)))
+        if !isnothing((m))
           return m
         end
       end
