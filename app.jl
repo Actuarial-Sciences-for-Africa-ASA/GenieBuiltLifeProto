@@ -30,6 +30,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @in new_contract_partner::Integer = 0
   @in selected_contractpartner_idx::Integer = -1
   @in selected_productitem_idx::Integer = -1
+  @in selected_tariffitem_idx::Integer = -1
   @in new_tariffitem_partner::Dict{Integer,Integer} = Dict()
   @in selected_version::String = ""
   @out current_version::Integer = 0
@@ -59,6 +60,12 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @out rolesContractPartner::Vector{Dict{String,Any}} = []
   @out rolesTariffItem::Vector{Dict{String,Any}} = []
   @out rolesTariffItemPartner::Vector{Dict{String,Any}} = []
+  # tariff calculations
+  @in tariffcalculation::Dict{String,Any} = Dict()
+  @in calculate::Bool = false
+  @out validated::Bool = false
+  @in tid::Int64 = 0
+  @in opendialogue::Bool = false
 
   @onchange isready begin
     LifeInsuranceDataModel.connect()
@@ -82,11 +89,13 @@ CS_UNDO = Stack{Dict{String,Any}}()
       push!(product_ids, Dict("label" => rev.description, "value" => rev.id.value))
     end
     push!(product_ids, Dict("label" => "none", "value" => 0))
+    tariffcalculation = get_tariff_interface(Val(1)).calls
 
     @push
     @show partner_ids
     @show product_ids
     @show "App is loaded"
+    @show tariffcalculation
     tab = "contracts"
   end
 
@@ -296,7 +305,21 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @onchange selected_productitem_idx begin
     if selected_productitem_idx != -1
       @show selected_productitem_idx
-      selected_productitem_idx = -1
+    end
+  end
+
+
+  @onchange selected_tariffitem_idx begin
+    if selected_tariffitem_idx != -1
+      @show selected_tariffitem_idx
+      @show opendialogue
+      if opendialogue
+        tariffcalculation = get_tariff_interface(Val(1)).calls
+        @show keys(tariffcalculation)
+        for_each(keys(tariffcalculation)) do param
+          @show param
+        end
+      end
     end
   end
 
@@ -370,16 +393,6 @@ CS_UNDO = Stack{Dict{String,Any}}()
           command = ""
 
         end
-
-        # TODO what's this?
-        #if isnothing(cs["partner_refs"][idx+1]["rev"]["id"]["value"])
-        #  deleteat!(cs["partner_refs"], idx + 1)
-        #  @info "after delete new cp"
-        #else
-        #  cs["partner_refs"][idx+1]["rev"]["ref_invalidfrom"]["value"] = current_workflow.ref_version
-        #  @info "after delete persisted cp"
-        #end
-
 
         if startswith(command, "delete_contract_partner")
 
@@ -481,6 +494,45 @@ CS_UNDO = Stack{Dict{String,Any}}()
         println("wassis shief gegangen ")
 
         @error "ERROR: " exception = (err, catch_backtrace())
+      end
+    end
+  end
+
+  @onchange tariffcalculation begin
+    if haskey(tariffcalculation, "calculation_target")
+      let fn = tariffcalculation["calculation_target"]["selected"]
+        if fn != "none"
+          println(fn)
+
+          for p in tariffcalculation["calculation_target"][fn]
+            @show p.first
+            @show p.second["value"]
+          end
+          validated = mapreduce(def -> !(isnothing(def.second["value"]) || def.second["value"] == ""), &, tariffcalculation["calculation_target"][fn])
+          @show validated
+        end
+      end
+    end
+  end
+
+  @onchange calculate begin
+    if calculate
+      calculate = false
+      @info "calculating"
+      try
+        tid = 1
+        calculator = get_tariff_interface(Val(tid)).calculator
+        tariffcalculation["result"]["value"] = 99
+        @show selected_productitem_idx
+        @show selected_tariffitem_idx
+        ti = ToStruct.tostruct(TariffItemSection, cs["product_items"][selected_productitem_idx+1]["tariff_items"][selected_tariffitem_idx+1])
+        calculator(ti, tariffcalculation)
+        @push
+      catch err
+        println("wassis shief gegangen ")
+
+        @error "ERROR: " exception = (err, catch_backtrace())
+
       end
     end
   end

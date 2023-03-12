@@ -277,7 +277,7 @@
                         <hr />
                         <q-expansion-item label="tariff items">
                             <q-list class="q-mt-md q-mr-sm bg-purple text-white">
-                                <div v-for="ti in pi['tariff_items']" class="q-pa-md">
+                                <div v-for="(ti,tiidx) in pi['tariff_items']" class="q-pa-md">
                                     <div class="row">
                                         <div class="col">
                                             <q-input bg-color="white" label="description"
@@ -322,7 +322,18 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <hr />
+                                    <div class="row">
+                                        <div class="col">
+                                            <q-btn flat label="dialog"
+                                                v-on:click="opendialogue=true; selected_productitem_idx=piidx; selected_tariffitem_idx=tiidx"
+                                                color=primary />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <h1>{{tariffcalculation}}</h1>
+                                        </div>
+                                    </div>
                                     <q-expansion-item label="tariff_item_partners">
                                         <q-list class="q-mt-md q-mr-sm bg-deep-purple-8 text-white">
                                             <div v-for="tipr in ti['partner_refs']" class="q-pa-md">
@@ -361,5 +372,59 @@
                     </div>
                 </q-expansion-item>
             </q-list>
+            <q-dialog v-model="opendialogue" persistent>
+                <q-card style="min-width: 350px">
+                    <q-card-section>
+                        <div class="row">
+                            <div class="col"><q-select v-model="tariffcalculation['calculation_target']['selected']"
+                                    :options="tariffcalculation['calculation_target']['options']">{{tariffcalculation['calculation_target']['label']}}</q-select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div
+                                v-for="(def, name) in tariffcalculation['calculation_target'][tariffcalculation['calculation_target']['selected']]">
+                                <div class="col" v-if="def['type']=='Int'">
+                                    <q-input :label=name type="Number" step="1" v-model="def['value']" :rules="[
+                                                                            val => (val !== null && val !== '' && parseInt(val)!=NaN) &&  val.indexOf('.')<0 || 'Please type an integer'
+                                                                            ]" :step="1"></q-input>
+                                </div>
+                                <div class="col" v-else-if="def['type']=='String'">
+                                    <q-input :label=name type="String" step="1" v-model="def['value']"></q-input>
+                                </div>
+                                <div class="col" v-else-if="def['type']=='Date'">
+                                    <q-input :label=name filled v-model="def['value']">
+                                        <q-icon name="event" class="cursor-pointer">
+                                            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                                <q-date :title=name v-model="def['value']" mask="YYYY-MM-DD">
+                                                    <div class="row items-center justify-end">
+                                                        <q-btn v-close-popup label="Close" color="primary" flat />
+                                                    </div>
+                                                </q-date>
+                                            </q-popup-proxy>
+                                        </q-icon>
+                                    </q-input>
+                                </div>
+                                <div class="col" v-else-if="def['type']=='Component'">
+                                </div>
+                                <div class="col" v-else>
+                                    <h1> {{name}} unknown type {{def['type']}} </h1>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <q-input label="result" filled type="Number"
+                                        v-model="tariffcalculation['result']['value']" :readonly=true></q-input>
+                                </div>
+                            </div>
+                        </div>
+                    </q-card-section><q-card-actions align="right" class="text-primary">
+                        <q-btn label="calculate" color="primary" v-on:click="calculate=true" :disable="!validated" />
+                        <q-btn flat label="Close" v-close-popup />
+                    </q-card-actions></q-card>
+            </q-dialog>
+
+
+
+
         </q-tab-panel>
     </q-tab-panels>
