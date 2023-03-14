@@ -61,11 +61,12 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @out rolesTariffItem::Vector{Dict{String,Any}} = []
   @out rolesTariffItemPartner::Vector{Dict{String,Any}} = []
   # tariff calculations
-  @in tariffcalculation::Dict{String,Any} = Dict()
+  @in tariffcalculation::Dict{String,Any} = get_tariff_interface(Val(0)).calls
   @in calculate::Bool = false
   @out validated::Bool = false
-  @in tid::Int64 = 0
   @in opendialogue::Bool = false
+  @in opendialogue2::Bool = false
+  @out tariff_interface_id::Integer = 0
 
   @onchange isready begin
     LifeInsuranceDataModel.connect()
@@ -89,14 +90,18 @@ CS_UNDO = Stack{Dict{String,Any}}()
       push!(product_ids, Dict("label" => rev.description, "value" => rev.id.value))
     end
     push!(product_ids, Dict("label" => "none", "value" => 0))
-    tariffcalculation = get_tariff_interface(Val(1)).calls
-
-    @push
-    @show partner_ids
-    @show product_ids
-    @show "App is loaded"
-    @show tariffcalculation
-    tab = "contracts"
+    try
+      @info "vor tariffcalculation tariff_interface_id"
+      @push
+      @show partner_ids
+      @show product_ids
+      @show "App is loaded"
+      @show tariffcalculation
+      tab = "contracts"
+    catch err
+      println("wassis shief gegangen ")
+      @error "ERROR: " exception = (err, catch_backtrace())
+    end
   end
 
   @onchange cs begin
@@ -116,9 +121,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
       if newreftime == ""
         @info "cancelled"
       else
-        @info "should parse now"
         n = replace(newreftime, "/" => "-")
-        @show n
         ref_time = ZonedDateTime(DateTime(n), tz"UTC")
         current_workflow = Workflow(
           type_of_entity="Contract",
@@ -308,17 +311,19 @@ CS_UNDO = Stack{Dict{String,Any}}()
     end
   end
 
-
   @onchange selected_tariffitem_idx begin
     if selected_tariffitem_idx != -1
+      @info "gleich tariff_interface_id"
       @show selected_tariffitem_idx
-      @show opendialogue
-      if opendialogue
-        tariffcalculation = get_tariff_interface(Val(1)).calls
-        @show keys(tariffcalculation)
-        for_each(keys(tariffcalculation)) do param
-          @show param
-        end
+      @show opendialogue2
+
+      @info "setting tariff_interface_id"
+      tariff_interface_id = cs["product_items"][selected_productitem_idx+1]["tariff_items"][selected_tariffitem_idx+1]["tariff_ref"]["ref"]["revision"]["interface_id"]
+      @show tariff_interface_id
+      tariffcalculation = get_tariff_interface(Val(tariff_interface_id)).calls
+      @show keys(tariffcalculation)
+      for_each(keys(tariffcalculation)) do param
+        @show param
       end
     end
   end
@@ -520,9 +525,8 @@ CS_UNDO = Stack{Dict{String,Any}}()
       calculate = false
       @info "calculating"
       try
-        tid = 1
-        calculator = get_tariff_interface(Val(tid)).calculator
-        tariffcalculation["result"]["value"] = 99
+        @show tariff_interface_id
+        calculator = get_tariff_interface(Val(tariff_interface_id)).calculator
         @show selected_productitem_idx
         @show selected_tariffitem_idx
         ti = ToStruct.tostruct(TariffItemSection, cs["product_items"][selected_productitem_idx+1]["tariff_items"][selected_tariffitem_idx+1])
