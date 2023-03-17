@@ -1,17 +1,16 @@
 module App
 
 using GenieFramework
-using JSON, DataStructures, Dates, SearchLight, TimeZones
-import SearchLight: find, SQLWhereExpression
-import BitemporalPostgres: get_revision, MaxDate, ValidityInterval
-import LifeInsuranceDataModel: PartnerRevision
-import LifeInsuranceContracts: connect, get_contracts, get_partners, get_products, serialize, deserialize, create_component!, update_component!, update_entity!, commit_workflow!, rollback_workflow!, persistModelStateContract,
+using JSON, DataStructures, Dates, TimeZones
+using LifeInsuranceContracts
+import LifeInsuranceContracts: tostruct, find, SQLWhereExpression,
+  connect, get_contracts, get_partners, get_ids, get_products, serialize, deserialize, create_component!, update_component!, update_entity!, commit_workflow!, rollback_workflow!, persistModelStateContract,
   ContractPartnerRole, TariffItemRole, TariffItemPartnerRole,
   Contract, Partner, Product, Tariff, Workflow,
   ContractSection, PartnerSection, ProductItemSection, TariffItemSection, ProductSection, TariffSection,
   csection, psection, pisection, prsection, tsection,
   get_contracts, get_partners, get_products, history_forest,
-  get_tariff_interface, persist_tariffs, compareModelStateContract, compareRevisions, convert, fn, load_role
+  get_tariff_interface, persist_tariffs, compareModelStateContract, compareRevisions, treeview, get_node_by_label, load_role
 
 @genietools
 
@@ -92,10 +91,8 @@ CS_UNDO = Stack{Dict{String,Any}}()
     ps = Dict{String,Any}("loaded" => "false")
     partners = get_partners()
 
-    partner_ids = map(partners) do p
-      Dict("value" => p.id.value, "label" => get_revision(Partner, PartnerRevision, p.ref_history, p.ref_version).description)
-    end
     push!(partner_ids, Dict("value" => 0, "label" => "nobody"))
+    partner_ids = get_ids(partners)
     for p in get_products()
       rev = prsection(p.id.value, now(tz"UTC"), now(tz"UTC"), 0).revision
       push!(product_ids, Dict("label" => rev.description, "value" => rev.id.value))
@@ -182,7 +179,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
       current_workflow = w1
       current_contract = c
 
-      histo = map(convert, history_forest(current_contract.ref_history.value).shadowed)
+      histo = map(treeview, history_forest(current_contract.ref_history.value).shadowed)
       cs = JSON.parse(serialize(csection(current_contract.id.value, now(tz"UTC"), ref_time, 1)))
       cs["loaded"] = "true"
       cs_persisted = deepcopy(cs)
@@ -237,13 +234,13 @@ CS_UNDO = Stack{Dict{String,Any}}()
         if activetxn
           current_workflow = find(Workflow, SQLWhereExpression("ref_history=? and is_committed=0", current_contract.ref_history))[1]
           ref_time = current_workflow.tsw_validfrom
-          histo = map(convert, history_forest(current_contract.ref_history.value).shadowed)
+          histo = map(treeview, history_forest(current_contract.ref_history.value).shadowed)
           cs = JSON.parse(serialize(csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
           cs["loaded"] = "true"
           new_product_reference = 0
         else
           ref_time = MaxDate - Day(1)
-          histo = map(convert, history_forest(current_contract.ref_history.value).shadowed)
+          histo = map(treeview, history_forest(current_contract.ref_history.value).shadowed)
           cs = JSON.parse(serialize(csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
           cs["loaded"] = "true"
         end
@@ -274,7 +271,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
       @info "enter selected_partner_idx"
       try
         current_partner = partners[selected_partner_idx+1]
-        # histo = map(convert, history_forest(current_contract.ref_history.value).shadowed)
+        # histo = map(treeview, history_forest(current_contract.ref_history.value).shadowed)
         ps = JSON.parse(serialize(psection(current_partner.id.value, now(tz"UTC"), now(tz"UTC"), activetxn ? 1 : 0)))
         ps["loaded"] = "true"
         selected_partner_idx = -1
@@ -296,7 +293,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
       @info "enter selected_product_idx"
       try
         current_product = products[selected_product_idx+1]
-        # histo = map(convert, history_forest(current_contract.ref_history.value).shadowed)
+        # histo = map(treeview, history_forest(current_contract.ref_history.value).shadowed)
         prs = JSON.parse(serialize(prsection(current_product.id.value, now(tz"UTC"), now(tz"UTC"), activetxn ? 1 : 0)))
         selected_product_idx = -1
         prs["loaded"] = "true"
@@ -540,7 +537,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
         calculator = get_tariff_interface(Val(tariff_interface_id)).calculator
         @show selected_productitem_idx
         @show selected_tariffitem_idx
-        ti = ToStruct.tostruct(TariffItemSection, cs["product_items"][selected_productitem_idx+1]["tariff_items"][selected_tariffitem_idx+1])
+        ti = tostruct(TariffItemSection, cs["product_items"][selected_productitem_idx+1]["tariff_items"][selected_tariffitem_idx+1])
         calculator(ti, tariffcalculation)
         @push
       catch err
