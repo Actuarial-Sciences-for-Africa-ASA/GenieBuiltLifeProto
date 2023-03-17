@@ -2,7 +2,7 @@
 
 julia_version = "1.8.2"
 manifest_format = "2.0"
-project_hash = "1007f559983db66e061e5edd2a0351ab673b18ae"
+project_hash = "9d4d15352349a582c7d06625b7c7b0c8b1195174"
 
 [[deps.AbstractTrees]]
 git-tree-sha1 = "faa260e4cb5aba097a73fab382dd4b5819d8ec8c"
@@ -691,6 +691,14 @@ git-tree-sha1 = "1f23243b8143a69c1acff6f7c1818fabfb269a15"
 uuid = "c8f0d631-89cd-4a1f-93d0-7542c3692561"
 version = "2.3.1"
 
+[[deps.LifeInsuranceContracts]]
+deps = ["BitemporalPostgres", "Dates", "JSON", "LifeInsuranceDataModel", "LifeInsuranceProduct", "Revise", "SearchLight", "TimeZones"]
+git-tree-sha1 = "f45d8049a28d688d9cf65a07d74bcacf636830d0"
+repo-rev = "main"
+repo-url = "https://github.com/michaelfliegner/LifeInsuranceContracts.jl"
+uuid = "fd4345fa-c73f-4ad5-b086-dba238792776"
+version = "0.1.0"
+
 [[deps.LifeInsuranceDataModel]]
 deps = ["BitemporalPostgres", "ColorSchemes", "DataFrames", "DataStructures", "Dates", "Intervals", "JSON", "LibPQ", "Logging", "Pkg", "Revise", "SearchLight", "SearchLightPostgreSQL", "Test", "TimeZones", "ToStruct"]
 git-tree-sha1 = "719555ff0e09fed43e346ab267305e008f9fda14"
@@ -701,7 +709,7 @@ version = "1.3.0"
 
 [[deps.LifeInsuranceProduct]]
 deps = ["BitemporalPostgres", "Dates", "JSON", "LifeContingencies", "LifeInsuranceDataModel", "MortalityTables", "Revise", "SearchLight", "SearchLightPostgreSQL", "TimeZones", "ToStruct", "Yields"]
-git-tree-sha1 = "1023269a9d217bc04652b61937da23344668cf53"
+git-tree-sha1 = "95cfc8eb057baca5dc1b167b8683ecfb66434209"
 repo-rev = "main"
 repo-url = "https://github.com/Actuarial-Sciences-for-Africa-ASA/LifeInsuranceProduct.jl"
 uuid = "492f22fc-54e6-4f0f-bb9b-bacd199f5046"

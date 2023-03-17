@@ -1,7 +1,18 @@
 module App
 
 using GenieFramework
-using BitemporalPostgres, DataStructures, JSON, LifeInsuranceDataModel, LifeInsuranceProduct, SearchLight, TimeZones, ToStruct
+using JSON, DataStructures, Dates, SearchLight, TimeZones
+import SearchLight: find, SQLWhereExpression
+import BitemporalPostgres: get_revision, MaxDate, ValidityInterval
+import LifeInsuranceDataModel: PartnerRevision
+import LifeInsuranceContracts: connect, get_contracts, get_partners, get_products, serialize, deserialize, create_component!, update_component!, update_entity!, commit_workflow!, rollback_workflow!, persistModelStateContract,
+  ContractPartnerRole, TariffItemRole, TariffItemPartnerRole,
+  Contract, Partner, Product, Tariff, Workflow,
+  ContractSection, PartnerSection, ProductItemSection, TariffItemSection, ProductSection, TariffSection,
+  csection, psection, pisection, prsection, tsection,
+  get_contracts, get_partners, get_products, history_forest,
+  get_tariff_interface, persist_tariffs, compareModelStateContract, compareRevisions, convert, fn, load_role
+
 @genietools
 
 include("treeedit.jl")
@@ -69,24 +80,24 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @out tariff_interface_id::Integer = 0
 
   @onchange isready begin
-    LifeInsuranceDataModel.connect()
-    rolesContractPartner = load_role(LifeInsuranceDataModel.ContractPartnerRole)
-    rolesTariffItem = load_role(LifeInsuranceDataModel.TariffItemRole)
-    rolesTariffItemPartner = load_role(LifeInsuranceDataModel.TariffItemPartnerRole)
+    connect()
+    rolesContractPartner = load_role(ContractPartnerRole)
+    rolesTariffItem = load_role(TariffItemRole)
+    rolesTariffItemPartner = load_role(TariffItemPartnerRole)
     @show rolesContractPartner
     @show rolesTariffItem
     @show rolesTariffItemPartner
     cs["loaded"] = "false"
     prs = Dict{String,Any}("loaded" => "false")
     ps = Dict{String,Any}("loaded" => "false")
-    partners = LifeInsuranceDataModel.get_partners()
+    partners = get_partners()
 
     partner_ids = map(partners) do p
       Dict("value" => p.id.value, "label" => get_revision(Partner, PartnerRevision, p.ref_history, p.ref_version).description)
     end
     push!(partner_ids, Dict("value" => 0, "label" => "nobody"))
-    for p in LifeInsuranceDataModel.get_products()
-      rev = LifeInsuranceDataModel.prsection(p.id.value, now(tz"UTC"), now(tz"UTC"), 0).revision
+    for p in get_products()
+      rev = prsection(p.id.value, now(tz"UTC"), now(tz"UTC"), 0).revision
       push!(product_ids, Dict("label" => rev.description, "value" => rev.id.value))
     end
     push!(product_ids, Dict("label" => "none", "value" => 0))
@@ -132,7 +143,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
         update_entity!(current_workflow)
         activetxn = true
 
-        cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
+        cs = JSON.parse(serialize(csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
         cs["loaded"] = "true"
         cs_persisted = deepcopy(cs)
 
@@ -171,8 +182,8 @@ CS_UNDO = Stack{Dict{String,Any}}()
       current_workflow = w1
       current_contract = c
 
-      histo = map(convert, LifeInsuranceDataModel.history_forest(current_contract.ref_history.value).shadowed)
-      cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, now(tz"UTC"), ref_time, 1)))
+      histo = map(convert, history_forest(current_contract.ref_history.value).shadowed)
+      cs = JSON.parse(serialize(csection(current_contract.id.value, now(tz"UTC"), ref_time, 1)))
       cs["loaded"] = "true"
       cs_persisted = deepcopy(cs)
       @info "cs==cs_persisted?"
@@ -226,14 +237,14 @@ CS_UNDO = Stack{Dict{String,Any}}()
         if activetxn
           current_workflow = find(Workflow, SQLWhereExpression("ref_history=? and is_committed=0", current_contract.ref_history))[1]
           ref_time = current_workflow.tsw_validfrom
-          histo = map(convert, LifeInsuranceDataModel.history_forest(current_contract.ref_history.value).shadowed)
-          cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
+          histo = map(convert, history_forest(current_contract.ref_history.value).shadowed)
+          cs = JSON.parse(serialize(csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
           cs["loaded"] = "true"
           new_product_reference = 0
         else
           ref_time = MaxDate - Day(1)
-          histo = map(convert, LifeInsuranceDataModel.history_forest(current_contract.ref_history.value).shadowed)
-          cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
+          histo = map(convert, history_forest(current_contract.ref_history.value).shadowed)
+          cs = JSON.parse(serialize(csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
           cs["loaded"] = "true"
         end
         @show current_workflow
@@ -263,8 +274,8 @@ CS_UNDO = Stack{Dict{String,Any}}()
       @info "enter selected_partner_idx"
       try
         current_partner = partners[selected_partner_idx+1]
-        # histo = map(convert, LifeInsuranceDataModel.history_forest(current_contract.ref_history.value).shadowed)
-        ps = JSON.parse(JSON.json(LifeInsuranceDataModel.psection(current_partner.id.value, now(tz"UTC"), now(tz"UTC"), activetxn ? 1 : 0)))
+        # histo = map(convert, history_forest(current_contract.ref_history.value).shadowed)
+        ps = JSON.parse(serialize(psection(current_partner.id.value, now(tz"UTC"), now(tz"UTC"), activetxn ? 1 : 0)))
         ps["loaded"] = "true"
         selected_partner_idx = -1
         ps["loaded"] = "true"
@@ -285,8 +296,8 @@ CS_UNDO = Stack{Dict{String,Any}}()
       @info "enter selected_product_idx"
       try
         current_product = products[selected_product_idx+1]
-        # histo = map(convert, LifeInsuranceDataModel.history_forest(current_contract.ref_history.value).shadowed)
-        prs = JSON.parse(JSON.json(LifeInsuranceDataModel.prsection(current_product.id.value, now(tz"UTC"), now(tz"UTC"), activetxn ? 1 : 0)))
+        # histo = map(convert, history_forest(current_contract.ref_history.value).shadowed)
+        prs = JSON.parse(serialize(prsection(current_product.id.value, now(tz"UTC"), now(tz"UTC"), activetxn ? 1 : 0)))
         selected_product_idx = -1
         prs["loaded"] = "true"
         @show prs["loaded"]
@@ -357,7 +368,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
           @info "before instantiation"
           pis = instantiate_product(prs0, partnerrolemap)
           @info "productitem created"
-          pisj = JSON.parse(JSON.json(pis))
+          pisj = JSON.parse(serialize(pis))
           @show pisj
           cs["product_items"] = [pisj]
           @show cs["product_items"]
@@ -369,7 +380,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
           @show cs["partner_refs"]
 
 
-          cprj = JSON.parse(JSON.json(ContractPartnerReference(
+          cprj = JSON.parse(serialize(ContractPartnerReference(
             rev=ContractPartnerRefRevision(ref_role=DbId(new_contract_partner_role), ref_partner=DbId(new_contract_partner)),
             ref=PartnerSection())))
           new_contract_partner_role = 0
@@ -391,7 +402,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
           )
           update_entity!(w1)
           current_workflow = w1
-          cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
+          cs = JSON.parse(serialize(csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
           cs["loaded"] = "true"
           @push
           @show command
@@ -444,7 +455,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
           @show cs_persisted
           persistModelStateContract(cs_persisted, cs, current_workflow, current_contract)
 
-          cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, txn_time, ref_time, 1)))
+          cs = JSON.parse(serialize(csection(current_contract.id.value, txn_time, ref_time, 1)))
           cs["loaded"] = "true"
           @push
         end
@@ -491,7 +502,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
         @show ref_time
         @show current_version
         @info "vor csection"
-        cs = JSON.parse(JSON.json(LifeInsuranceDataModel.csection(current_contract.id.value, txn_time, ref_time, activetxn ? 1 : 0)))
+        cs = JSON.parse(serialize(csection(current_contract.id.value, txn_time, ref_time, activetxn ? 1 : 0)))
         cs["loaded"] = "true"
         @info "vor tab "
         tab = "csection"
@@ -547,7 +558,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
 
     if tab == "contracts"
       current_contract = Contract()
-      contracts = LifeInsuranceDataModel.get_contracts()
+      contracts = get_contracts()
       let df = SearchLight.query("select distinct c.id, w.is_committed from contracts c join histories h on c.ref_history = h.id join workflows w on w.ref_history = h.id ")
         contract_ids = Dict(Pair.(df.id, df.is_committed))
       end
@@ -556,11 +567,11 @@ CS_UNDO = Stack{Dict{String,Any}}()
     end
 
     if (tab == "partners")
-      partners = LifeInsuranceDataModel.get_partners()
+      partners = get_partners()
       @info "read partners"
     end
     if (tab == "products")
-      products = LifeInsuranceDataModel.get_products()
+      products = get_products()
       @push
       @info "read products"
     end
@@ -576,122 +587,6 @@ CS_UNDO = Stack{Dict{String,Any}}()
     @info "leave tab handler"
   end
 end
-
-"""
-function definitions
-"""
-
-"""
-convert(node::BitemporalPostgres.Node)::Dict{String,Any}
-
-provides the view for the history forest from tree data the contracts/partnersModel delivers
-"""
-function convert(node::BitemporalPostgres.Node)::Dict{String,Any}
-  i = Dict(string(fn) => getfield(getfield(node, :interval), fn) for fn in fieldnames(ValidityInterval))
-  shdw = length(node.shadowed) == 0 ? [] : map(node.shadowed) do child
-    convert(child)
-  end
-  Dict("version" => string(i["ref_version"]), "interval" => i, "children" => shdw, "icon" => (i["is_committed"] == 1 ? "done" : "pending"), "label" => (i["is_committed"] == 1 ? "committed " : "pending ") * string(i["tsdb_validfrom"]) * " valid as of " * string(Date(i["tsworld_validfrom"], UTC)))
-end
-
-
-"""
-fn
-retrieves a history node from its label 
-"""
-
-function fn(ns::Vector{Dict{String,Any}}, lbl::String)
-  for n in ns
-    if (n["version"] == lbl)
-      return (n)
-    else
-      if (length(n["children"]) > 0)
-        m = fn(n["children"], lbl)
-        if !isnothing((m))
-          return m
-        end
-      end
-    end
-  end
-end
-"""
-compareRevisions(t, previous::Dict{String,Any}, current::Dict{String,Any}) where {T<:BitemporalPostgres.ComponentRevision}
-compare corresponding revision elements and return nothing if equal a pair of both else
-"""
-function compareRevisions(t, previous::Dict{String,Any}, current::Dict{String,Any})
-  let changed = false
-    for (key, previous_value) in previous
-      if !(key in ("ref_validfrom", "ref_invalidfrom", "ref_component"))
-        let current_value = current[key]
-          if previous_value != current_value
-            changed = true
-          end
-        end
-      end
-    end
-    if (changed)
-      (ToStruct.tostruct(t, previous), ToStruct.tostruct(t, current))
-    end
-  end
-end
-
-"""
-compareModelStateContract(previous::Dict{String,Any}, current::Dict{String,Any}, w::Workflow)
-	compare viewmodel state for a contract section
-"""
-function compareModelStateContract(previous::Dict{String,Any}, current::Dict{String,Any}, w::Workflow)
-  diff = []
-  @show current["revision"]
-  @show previous
-  cr = compareRevisions(ContractRevision, previous["revision"], current["revision"])
-  if (!isnothing(cr))
-    push!(diff, cr)
-  end
-  @info "comparing Partner_refs"
-  for i in 1:length(current["partner_refs"])
-    @show current["partner_refs"]
-    curr = current["partner_refs"][i]["rev"]
-    @info "current pref rev"
-    @show curr
-    if isnothing(curr["id"]["value"])
-      @info ("INSERT" * string(i))
-      push!(diff, (nothing, ToStruct.tostruct(ContractPartnerRefRevision, curr)))
-    else
-      prev = previous["partner_refs"][i]["rev"]
-      if curr["ref_invalidfrom"]["value"] == w.ref_version
-        @info ("DELETE" * string(i))
-        push!(diff, (ToStruct.tostruct(ContractPartnerRefRevision, prev), ToStruct.tostruct(ContractPartnerRefRevision, curr)))
-        @info "DIFF="
-        @show diff
-      else
-        @info ("UPDATE" * string(i))
-        cprr = compareRevisions(ContractPartnerRefRevision, prev, curr)
-        if (!isnothing(cprr))
-          push!(diff, cprr)
-        end
-      end
-    end
-  end
-  @info "comparing product items"
-  for i in 1:length(current["product_items"])
-    @show current["product_items"]
-    curr = current["product_items"][i]["revision"]
-    @info "current pref rev"
-    @show curr
-
-  end
-  @info "final DIFF"
-  @show diff
-  diff
-end
-
-function load_role(role)
-  LifeInsuranceDataModel.connect()
-  map(find(role)) do entry
-    Dict{String,Any}("value" => entry.id.value, "label" => entry.value)
-  end
-end
-
 
 @page("/", "app.jl.html")
 
