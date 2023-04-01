@@ -2,7 +2,7 @@
 
 julia_version = "1.8.2"
 manifest_format = "2.0"
-project_hash = "ad4356c17207ee8986d9be33c2c950e051e7f52b"
+project_hash = "bdcabc7fbe36f79511a053577609efa9334a1d55"
 
 [[deps.AbstractTrees]]
 git-tree-sha1 = "faa260e4cb5aba097a73fab382dd4b5819d8ec8c"
@@ -38,9 +38,9 @@ version = "1.1.1"
 
 [[deps.ArrayInterface]]
 deps = ["Adapt", "LinearAlgebra", "Requires", "SnoopPrecompile", "SparseArrays", "SuiteSparse"]
-git-tree-sha1 = "a89acc90c551067cd84119ff018619a1a76c6277"
+git-tree-sha1 = "d76e35eb01ce7264ab8ee18ca9ba3fb4c844b6df"
 uuid = "4fba245c-0d91-5ea0-9b3e-6abc04ee57a9"
-version = "7.2.1"
+version = "7.4.1"
 
 [[deps.ArrayLayouts]]
 deps = ["FillArrays", "LinearAlgebra", "SparseArrays"]
@@ -364,9 +364,9 @@ uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
 [[deps.FillArrays]]
 deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
-git-tree-sha1 = "9dec0199898d4d5c1d1b257cbf2cc498afe03a2a"
+git-tree-sha1 = "7072f1e3e5a8be51d525d64f63d3ec1287ff2790"
 uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
-version = "0.13.8"
+version = "0.13.11"
 
 [[deps.FinanceCore]]
 deps = ["Roots"]
@@ -376,9 +376,9 @@ version = "1.0.1"
 
 [[deps.FiniteDiff]]
 deps = ["ArrayInterface", "LinearAlgebra", "Requires", "Setfield", "SparseArrays", "StaticArrays"]
-git-tree-sha1 = "ed1b56934a2f7a65035976985da71b6a65b4f2cf"
+git-tree-sha1 = "03fcb1c42ec905d15b305359603888ec3e65f886"
 uuid = "6a86dc24-6348-571c-b903-95158fe2bd41"
-version = "2.18.0"
+version = "2.19.0"
 
 [[deps.FixedPointNumbers]]
 deps = ["Statistics"]
@@ -481,15 +481,15 @@ version = "1.1.0"
 
 [[deps.GeoInterface]]
 deps = ["Extents"]
-git-tree-sha1 = "e07a1b98ed72e3cdd02c6ceaab94b8a606faca40"
+git-tree-sha1 = "0eb6de0b312688f852f347171aba888658e29f20"
 uuid = "cf35fbd7-0cd7-5166-be24-54bfbe79505f"
-version = "1.2.1"
+version = "1.3.0"
 
 [[deps.GeometryBasics]]
 deps = ["EarCut_jll", "GeoInterface", "IterTools", "LinearAlgebra", "StaticArrays", "StructArrays", "Tables"]
-git-tree-sha1 = "fe9aea4ed3ec6afdfbeb5a4f39a2208909b162a6"
+git-tree-sha1 = "303202358e38d2b01ba46844b92e48a3c238fd9e"
 uuid = "5c1252a2-5f33-56bf-86c9-59e7332b4326"
-version = "0.4.5"
+version = "0.4.6"
 
 [[deps.Glob]]
 git-tree-sha1 = "4df9f7e06108728ebf00a0a11edee4b29a482bb2"
@@ -692,28 +692,22 @@ uuid = "c8f0d631-89cd-4a1f-93d0-7542c3692561"
 version = "2.3.1"
 
 [[deps.LifeInsuranceContracts]]
-deps = ["BitemporalPostgres", "Dates", "JSON", "LifeInsuranceDataModel", "LifeInsuranceProduct", "Revise", "SearchLight", "TimeZones", "ToStruct"]
-git-tree-sha1 = "2133ac88f772ca9356e90a932332089de3f90ffd"
-repo-rev = "main"
-repo-url = "https://github.com/michaelfliegner/LifeInsuranceContracts.jl"
+deps = ["BitemporalPostgres", "Dates", "JSON", "LifeContingencies", "LifeInsuranceDataModel", "LifeInsuranceProduct", "MortalityTables", "Revise", "SearchLight", "SearchLightPostgreSQL", "TimeZones", "ToStruct", "Yields"]
+path = "/home/mf/dev/julia_depot/dev/LifeInsuranceContracts"
 uuid = "fd4345fa-c73f-4ad5-b086-dba238792776"
-version = "0.1.0"
+version = "0.1.2"
 
 [[deps.LifeInsuranceDataModel]]
 deps = ["BitemporalPostgres", "ColorSchemes", "DataFrames", "DataStructures", "Dates", "Intervals", "JSON", "LibPQ", "Logging", "Pkg", "Revise", "SearchLight", "SearchLightPostgreSQL", "Test", "TimeZones", "ToStruct"]
-git-tree-sha1 = "8b33f403046edd47b23fa9823d74ad4500e5658e"
-repo-rev = "main"
-repo-url = "https://github.com/Actuarial-Sciences-for-Africa-ASA/LifeInsuranceDataModel.jl"
+path = "/home/mf/dev/julia_depot/dev/LifeInsuranceDataModel"
 uuid = "4892898e-25d7-46ce-b5c3-dea2164303ac"
-version = "1.3.0"
+version = "1.3.1"
 
 [[deps.LifeInsuranceProduct]]
 deps = ["BitemporalPostgres", "Dates", "JSON", "LifeContingencies", "LifeInsuranceDataModel", "MortalityTables", "Revise", "SearchLight", "SearchLightPostgreSQL", "TimeZones", "ToStruct", "Yields"]
-git-tree-sha1 = "8d799d491c9df3e895d1d8d711b4e7a16646dd11"
-repo-rev = "main"
-repo-url = "https://github.com/Actuarial-Sciences-for-Africa-ASA/LifeInsuranceProduct.jl"
+path = "/home/mf/dev/julia_depot/dev/LifeInsuranceProduct"
 uuid = "492f22fc-54e6-4f0f-bb9b-bacd199f5046"
-version = "0.6.1"
+version = "0.6.2"
 
 [[deps.LineSearches]]
 deps = ["LinearAlgebra", "NLSolversBase", "NaNMath", "Parameters", "Printf"]
@@ -1147,9 +1141,9 @@ version = "0.1.15"
 
 [[deps.StaticArrays]]
 deps = ["LinearAlgebra", "Random", "StaticArraysCore", "Statistics"]
-git-tree-sha1 = "6aa098ef1012364f2ede6b17bf358c7f1fbe90d4"
+git-tree-sha1 = "b8d897fe7fa688e93aef573711cb207c08c9e11e"
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
-version = "1.5.17"
+version = "1.5.19"
 
 [[deps.StaticArraysCore]]
 git-tree-sha1 = "6b7ba252635a5eff6a0b0664a41ee140a1c9e72a"
@@ -1371,10 +1365,10 @@ uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
 version = "1.2.12+3"
 
 [[deps.ZygoteRules]]
-deps = ["MacroTools"]
-git-tree-sha1 = "8c1a8e4dfacb1fd631745552c8db35d0deb09ea0"
+deps = ["ChainRulesCore", "MacroTools"]
+git-tree-sha1 = "977aed5d006b840e2e40c0b48984f7463109046d"
 uuid = "700de1a5-db45-46bc-99cf-38207098b444"
-version = "0.2.2"
+version = "0.2.3"
 
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl", "OpenBLAS_jll"]

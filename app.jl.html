@@ -57,13 +57,23 @@
                         </q-input>
                     </div>
                     <div class="col">
-                        <q-input bg-color="white" label="description" v-model="ps['revision']['description']['value']">
+                        <q-input bg-color="white" label="description" v-model="ps['revision']['description']['value']"
+                            :readonly="true">
                         </q-input>
                     </div>
                     <div class="col">
-                        <q-input bg-color="white" label="date of birth" v-model="ps['revision']['date_of_birth']">
+                        <q-input bg-color="white" label="date of birth" v-model="ps['revision']['date_of_birth']"
+                            :readonly="true">
                         </q-input>
                     </div>
+                </div>
+                <div class="col">
+                    <q-input bg-color="white" label="sex" v-model="ps['revision']['sex']" :readonly="true">
+                    </q-input>
+                </div>
+                <div class="col">
+                    <q-checkbox bg-color="white" label="smoker" v-model="ps['revision']['smoker']" disable />
+                    </checkbox>
                 </div>
             </div>
             <hr />
@@ -109,6 +119,15 @@
                             <q-item-section>
                                 <p>Mortality Table</p>
                                 {{ppid['ref']['revision']['mortality_table']}}
+                            </q-item-section><q-item-section>
+                                <p>interest rate</p>
+                                {{ppid['ref']['revision']['interest_rate']}}
+                            </q-item-section>
+                            <q-item-section>
+                                {{ppid['ref']['revision']['parameters']}}
+                            </q-item-section>
+                            <q-item-section>
+                                {{ppid['ref']['contract_attributes']}}
                             </q-item-section>
                             <q-item-section>
                                 <q-list dense="" bordered="" padding="" class="rounded-borders">
@@ -256,7 +275,7 @@
                                 {{rolesTariffItemPartner[role-1]['label']}} </div>
                             <div class="col">
                                 <q-select bg-color="white" v-model="productpartnerroles[role]" :options="partner_ids"
-                                    emit-value map-options</q-select>
+                                    emit-value map-options></q-select>
                             </div>
                         </div>
                     </div>
@@ -279,6 +298,14 @@
                             <q-list class="q-mt-md q-mr-sm bg-purple text-white">
                                 <div v-for="(ti,tiidx) in pi['tariff_items']" class="q-pa-md">
                                     <div class="row">
+                                        <div class="col">
+                                            <q-btn flat label="select"
+                                                v-on:click="selected_productitem_idx=piidx; selected_tariffitem_idx=tiidx;selected_tariffitem[piidx+1][tiidx+1]=true"
+                                                color="primary" v-if="!selected_tariffitem[piidx+1][tiidx+1]"></q-btn>
+                                            <q-btn flat label="calculator"
+                                                v-on:click="opendialogue=true; selected_productitem_idx=piidx; selected_tariffitem_idx=tiidx"
+                                                color=primary v-else></q-btn>
+                                        </div>
                                         <div class="col">
                                             <q-input bg-color="white" label="description"
                                                 v-model="ti['tariff_ref']['rev']['description']" :readonly="!activetxn">
@@ -320,13 +347,6 @@
                                                     </q-icon>
                                                 </q-input>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <q-btn flat label="calculator"
-                                                v-on:click="opendialogue=true; selected_productitem_idx=piidx; selected_tariffitem_idx=tiidx"
-                                                color=primary />
                                         </div>
                                     </div>
                                     <q-expansion-item label="tariff_item_partners">
@@ -413,8 +433,8 @@
                             </div>
                         </div>
                     </q-card-section><q-card-actions align="right" class="text-primary">
-                        <q-btn label="calculate" color="primary" v-on:click="calculate=true" :disable="!validated" />
                         <q-btn flat label="Close" v-close-popup />
+                        <q-btn label="calculate" color="primary" v-on:click="calculate=true" :readonly="!validated" />
                     </q-card-actions></q-card>
             </q-dialog>
 

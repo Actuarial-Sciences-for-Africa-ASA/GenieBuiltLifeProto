@@ -1,7 +1,7 @@
 module App
 
 using GenieFramework
-using JSON, DataStructures, Dates, TimeZones
+using JSON, DataStructures, Dates, SearchLight, TimeZones
 using LifeInsuranceContracts
 import LifeInsuranceContracts: tostruct, find, SQLWhereExpression,
   connect, get_contracts, get_partners, get_ids, get_products, serialize, deserialize, create_component!, update_component!, update_entity!, commit_workflow!, rollback_workflow!, persistModelStateContract,
@@ -41,6 +41,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @in selected_contractpartner_idx::Integer = -1
   @in selected_productitem_idx::Integer = -1
   @in selected_tariffitem_idx::Integer = -1
+  @in selected_tariffitem::Dict{Integer,Dict{Integer,Bool}} = Dict()
   @in new_tariffitem_partner::Dict{Integer,Integer} = Dict()
   @in selected_version::String = ""
   @out current_version::Integer = 0
@@ -65,8 +66,8 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @out tpidrolemap::Dict{Integer,Integer} = Dict{Integer,Integer}()
   @in show_tariff_item_partners::Bool = false
   @in show_tariff_items::Bool = false
-  @out d::Dict{String,Any} = deepcopy(testdict)
-  @in tree::Vector{Dict{Symbol,Any}} = [dict_tree(testdict)]
+  @out d::Dict{String,Any} = Dict()
+  @in tree::Vector{Dict{Symbol,Any}} = []
   @out rolesContractPartner::Vector{Dict{String,Any}} = []
   @out rolesTariffItem::Vector{Dict{String,Any}} = []
   @out rolesTariffItemPartner::Vector{Dict{String,Any}} = []
@@ -75,7 +76,6 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @in calculate::Bool = false
   @out validated::Bool = false
   @in opendialogue::Bool = false
-  @in opendialogue2::Bool = false
   @out tariff_interface_id::Integer = 0
 
   @onchange isready begin
@@ -105,6 +105,10 @@ CS_UNDO = Stack{Dict{String,Any}}()
       @show product_ids
       @show "App is loaded"
       @show tariffcalculation
+      # calls = get_tariff_interface(Val(2)).calls
+      # d = deepcopy(calls)
+      # tree = [dict_tree(calls)]
+      # @show tree
       tab = "contracts"
     catch err
       println("wassis shief gegangen ")
@@ -244,6 +248,13 @@ CS_UNDO = Stack{Dict{String,Any}}()
           cs = JSON.parse(serialize(csection(current_contract.id.value, now(tz"UTC"), ref_time, activetxn ? 1 : 0)))
           cs["loaded"] = "true"
         end
+        for pi in 1:length(cs["product_items"])
+          selected_tariffitem[pi] = Dict()
+          for ti in 1:length(cs["product_items"][pi])
+            selected_tariffitem[pi][ti] = false
+          end
+        end
+        @push
         @show current_workflow
         cs_persisted = deepcopy(cs)
         @info "cs==cs_persisted?"
@@ -321,18 +332,27 @@ CS_UNDO = Stack{Dict{String,Any}}()
 
   @onchange selected_tariffitem_idx begin
     if selected_tariffitem_idx != -1
-      @info "gleich tariff_interface_id"
+      @info "gleich tariff_interface_id=@="
       @show selected_tariffitem_idx
-      @show opendialogue2
-
+      for p in keys(selected_tariffitem)
+        for t in keys(selected_tariffitem[p])
+          selected_tariffitem[p][t] = false
+        end
+      end
+      @info "nach reset"
+      @show selected_tariffitem
+      selected_tariffitem[selected_productitem_idx+1][selected_tariffitem_idx+1] = true
+      @show selected_tariffitem
       @info "setting tariff_interface_id"
       tariff_interface_id = cs["product_items"][selected_productitem_idx+1]["tariff_items"][selected_tariffitem_idx+1]["tariff_ref"]["ref"]["revision"]["interface_id"]
       @show tariff_interface_id
       tariffcalculation = get_tariff_interface(Val(tariff_interface_id)).calls
-      @show keys(tariffcalculation)
-      for_each(keys(tariffcalculation)) do param
-        @show param
-      end
+      @show tariffcalculation
+      @push
+      #@show keys(tariffcalculation)
+      #for_each(keys(tariffcalculation)) do param
+      #  @show param
+      #end
     end
   end
 
@@ -511,6 +531,13 @@ CS_UNDO = Stack{Dict{String,Any}}()
     end
   end
 
+  @onchange opendialogue begin
+    @info "opendialogue"
+    @show selected_tariffitem
+    @show tariff_interface_id
+    @show get_tariff_interface(Val(tariff_interface_id)).calls
+  end
+
   @onchange tariffcalculation begin
     if haskey(tariffcalculation, "calculation_target")
       let fn = tariffcalculation["calculation_target"]["selected"]
@@ -538,10 +565,10 @@ CS_UNDO = Stack{Dict{String,Any}}()
         @show selected_productitem_idx
         @show selected_tariffitem_idx
         ti = tostruct(TariffItemSection, cs["product_items"][selected_productitem_idx+1]["tariff_items"][selected_tariffitem_idx+1])
-        calculator(ti, tariffcalculation)
+        calculator(Val(tariff_interface_id), ti, tariffcalculation)
         @push
       catch err
-        println("wassis shief gegangen ")
+        @info("Exception calculating ")
 
         @error "ERROR: " exception = (err, catch_backtrace())
 
@@ -568,7 +595,9 @@ CS_UNDO = Stack{Dict{String,Any}}()
       @info "read partners"
     end
     if (tab == "products")
+      @info "products"
       products = get_products()
+      @show products
       @push
       @info "read products"
     end

@@ -6,7 +6,7 @@ This is initial scaffolding for a
 * pluggable product data
 
 ## MVVM Architecture 
-
+This app leverages the great [Genie Framework](https://genieframework.com/)
 ### Transactions
 
 Transaction data are persistent. 

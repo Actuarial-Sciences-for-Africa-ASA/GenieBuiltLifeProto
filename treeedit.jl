@@ -1,21 +1,22 @@
-testdict = JSON.parse("""
-{
-  "test":
-  {
-  "foo": false,
-  "baz": "qux",
-  "corge": 
-    {
-      "grault": 1
-    }
-  } 
-}
-""")
+
+#JSON.parse("""
+#{
+#  "test":
+#  {
+#  "foo": false,
+#  "baz": "qux",
+#  "corge": 
+#    {
+#      "grault": 1
+#    }
+#  } 
+#}
+#""")
 
 dict(; kwargs...) = Dict{Symbol,Any}(kwargs...)
 const mydiv = Genie.Renderer.Html.div
 
-function dict_tree(startfile; parent="d", name="d")
+function dict_tree(startfile; parent="calls", name="calls")
     if startfile isa Dict
         k = keys(startfile)
         dict(
