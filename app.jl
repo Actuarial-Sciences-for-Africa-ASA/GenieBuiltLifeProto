@@ -74,6 +74,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
   # tariff calculations
   @in tariffcalculation::Dict{String,Any} = get_tariff_interface(Val(0)).calls
   @in calculate::Bool = false
+  @in sync::Bool = false
   @out validated::Bool = false
   @in opendialogue::Bool = false
   @out tariff_interface_id::Integer = 0
@@ -376,7 +377,6 @@ CS_UNDO = Stack{Dict{String,Any}}()
           @show command
           @show productpartnerroles
           @show values(productpartnerroles)
-          @show 0 in values(productpartnerroles)
           partnerrolemap::Dict{Integer,PartnerSection} = Dict()
           for key in keys(productpartnerroles)
             partnerrolemap[key] = psection(productpartnerroles[key], now(tz"UTC"), ref_time)
@@ -555,6 +555,20 @@ CS_UNDO = Stack{Dict{String,Any}}()
     end
   end
 
+  @onchange sync begin
+    if sync
+      @info "sync called"
+      ca = cs["product_items"][selected_productitem_idx+1]["tariff_items"][selected_tariffitem_idx+1]["contract_attributes"]
+      for k in keys(ca)
+        if isnothing(ca[k])
+          println("nothing" * string(k))
+        else
+          println(k * " = " * string(ca[k]))
+        end
+      end
+    end
+  end
+
   @onchange calculate begin
     if calculate
       calculate = false
@@ -565,7 +579,9 @@ CS_UNDO = Stack{Dict{String,Any}}()
         @show selected_productitem_idx
         @show selected_tariffitem_idx
         ti = tostruct(TariffItemSection, cs["product_items"][selected_productitem_idx+1]["tariff_items"][selected_tariffitem_idx+1])
-        calculator(Val(tariff_interface_id), ti, tariffcalculation)
+        @info "vor calc"
+        @show tariffcalculation
+        calculator(tariff_interface_id, ti, tariffcalculation)
         @push
       catch err
         @info("Exception calculating ")

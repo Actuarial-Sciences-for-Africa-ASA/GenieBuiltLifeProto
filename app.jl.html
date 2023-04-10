@@ -97,8 +97,8 @@
             <q-card v-else="" class="my-card bg-purple-8 text-white">
                 <q-card-section>
                     <div class="text-h2 text-white">Product
-                        {{prs['revision']['ref_component']['value']}}
-                    </div>partner
+                        {{prs['revision']['ref_product']['value']}}
+                    </div>
                     <div class="text-h2 text-white">{{prs['revision']['description']}}</div>
                 </q-card-section>
                 <div id="ihe7x" class="q-mt-md">
@@ -223,8 +223,9 @@
                                 </q0input>
                         </div>
                         <div class="col">
-                            <q-select bg-color="white" label="partner_role sel" v-model="new_contract_partner_role"
-                                :options="rolesContractPartner" emit-value map-options :readonly="!activetxn">
+                            <q-select bg-color="white" label="parshow 0tner_role sel"
+                                v-model="new_contract_partner_role" :options="rolesContractPartner" emit-value
+                                map-options :readonly="!activetxn">
                             </q-select>
                         </div>
                         <div class="col">
@@ -269,6 +270,7 @@
                     <q-select bg-color="white" label="referenced product" v-model="new_product_reference"
                         :options="product_ids" emit-value map-options v-if="activetxn && cs['product_items'].length==0">
                     </q-select>
+
                     <div v-for="role in Object.keys(productpartnerroles)">
                         <div class="row">
                             <div class="col">
@@ -287,6 +289,11 @@
                             </q-btn>
                         </div>
                         <div class="row">
+                            <div class="col">
+                                <q-input bg-color="white" label="product id"
+                                    v-model="pi['revision']['ref_product']['value']" :readonly="!activetxn">
+                                </q-input>
+                            </div>
                             <div class="col">
                                 <q-input bg-color="white" label="description" v-model="pi['revision']['description']"
                                     :readonly="!activetxn">
@@ -433,6 +440,7 @@
                             </div>
                         </div>
                     </q-card-section><q-card-actions align="right" class="text-primary">
+                        <q-btn label="sync" color="primary" v-on:click="sync=true" :readonly="!validated" />
                         <q-btn flat label="Close" v-close-popup />
                         <q-btn label="calculate" color="primary" v-on:click="calculate=true" :readonly="!validated" />
                     </q-card-actions></q-card>
