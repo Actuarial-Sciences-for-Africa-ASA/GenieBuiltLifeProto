@@ -41,7 +41,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @in selected_contractpartner_idx::Integer = -1
   @in selected_productitem_idx::Integer = -1
   @in selected_tariffitem_idx::Integer = -1
-  @in selected_tariffitem::Dict{Integer,Dict{Integer,Bool}} = Dict()
+  @in selected_tariffitem::Dict{Integer,Dict{Integer,Bool}} = Dict(0 => Dict(0 => false))
   @in new_tariffitem_partner::Dict{Integer,Integer} = Dict()
   @in selected_version::String = ""
   @out current_version::Integer = 0
@@ -105,11 +105,6 @@ CS_UNDO = Stack{Dict{String,Any}}()
       @show partner_ids
       @show product_ids
       @show "App is loaded"
-      @show tariffcalculation
-      # calls = get_tariff_interface(Val(2)).calls
-      # d = deepcopy(calls)
-      # tree = [dict_tree(calls)]
-      # @show tree
       tab = "contracts"
     catch err
       println("wassis shief gegangen ")
@@ -255,6 +250,8 @@ CS_UNDO = Stack{Dict{String,Any}}()
             selected_tariffitem[pi][ti] = false
           end
         end
+        selected_tariffitem_idx = -1
+        selected_productitem_idx = -1
         @push
         @show current_workflow
         cs_persisted = deepcopy(cs)
@@ -350,10 +347,6 @@ CS_UNDO = Stack{Dict{String,Any}}()
       tariffcalculation = get_tariff_interface(Val(tariff_interface_id)).calls
       @show tariffcalculation
       @push
-      #@show keys(tariffcalculation)
-      #for_each(keys(tariffcalculation)) do param
-      #  @show param
-      #end
     end
   end
 
@@ -530,12 +523,14 @@ CS_UNDO = Stack{Dict{String,Any}}()
       end
     end
   end
-
+  @show selected_tariffitem
+  @show tariff_interface_id
+  @show get_tariff_interface(Val(tariff_interface_id)).calls
   @onchange opendialogue begin
     @info "opendialogue"
-    @show selected_tariffitem
-    @show tariff_interface_id
-    @show get_tariff_interface(Val(tariff_interface_id)).calls
+    tariffcalculation = get_tariff_interface(Val(tariff_interface_id)).calls
+    @show tariffcalculation
+    @push
   end
 
   @onchange tariffcalculation begin
@@ -561,11 +556,34 @@ CS_UNDO = Stack{Dict{String,Any}}()
       ca = cs["product_items"][selected_productitem_idx+1]["tariff_items"][selected_tariffitem_idx+1]["contract_attributes"]
       for k in keys(ca)
         if isnothing(ca[k])
-          println("nothing" * string(k))
+          println("ca nothing" * string(k))
         else
-          println(k * " = " * string(ca[k]))
+          println("ca " * k * " = " * string(ca[k]))
         end
       end
+      tc = tariffcalculation["calculation_target"]
+      @show tc
+      tcsel = tc["selected"]
+      @show tcsel
+      args = tc[tcsel]
+      @show args
+      for k in keys(args)
+        @show args[k]
+        if haskey(ca, k)
+          @show ca[k]
+          if args[k]["type"] == "Int"
+            @show parse(Int, args[k]["value"])
+            ca[k]["value"] = parse(Int, args[k]["value"])
+          else
+            @show args[k]["value"]
+            ca[k]["value"] = args[k]["value"]
+          end
+        end
+      end
+      if haskey(ca, tcsel)
+        ca[tcsel]["value"] = parse(Int, args["result"]["value"])
+      end
+      @show ca
     end
   end
 

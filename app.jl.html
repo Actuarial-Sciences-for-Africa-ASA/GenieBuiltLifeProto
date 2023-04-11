@@ -96,8 +96,7 @@
             <h1 v-if="prs['loaded'] == 'false'"> no product loaded</h1>
             <q-card v-else="" class="my-card bg-purple-8 text-white">
                 <q-card-section>
-                    <div class="text-h2 text-white">Product
-                        {{prs['revision']['ref_product']['value']}}
+                    <div class="text-h2 text-white">Product {{prs['revision']['ref_component']['value']}}
                     </div>
                     <div class="text-h2 text-white">{{prs['revision']['description']}}</div>
                 </q-card-section>
