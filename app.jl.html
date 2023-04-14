@@ -116,16 +116,11 @@
                                 <p>tariff description</p> {{ppid['ref']['revision']['description']}}
                             </q-item-section>
                             <q-item-section>
-                                <p>Mortality Table</p>
-                                {{ppid['ref']['revision']['mortality_table']}}
-                            </q-item-section><q-item-section>
-                                <p>interest rate</p>
-                                {{ppid['ref']['revision']['interest_rate']}}
-                            </q-item-section>
-                            <q-item-section>
+                                <p>tariff parameters</p>
                                 {{ppid['ref']['revision']['parameters']}}
                             </q-item-section>
                             <q-item-section>
+                                <p>contract attributes</p>
                                 {{ppid['ref']['contract_attributes']}}
                             </q-item-section>
                             <q-item-section>
@@ -258,7 +253,8 @@
                             </div>
                             <div class="col">
                                 <q-select bg-color="white" label="ref_partner sel"
-                                    v-model="pr['rev']['ref_partner']['value']" :options="[1,2]" :readonly="!activetxn">
+                                    v-model="pr['rev']['ref_partner']['value']" :options="partner_ids"
+                                    :readonly="!activetxn">
                                 </q-select>
                             </div>
                         </div>
@@ -289,6 +285,12 @@
                         </div>
                         <div class="row">
                             <div class="col">
+                                <q-input bg-color="white" label="product"
+                                    v-model="product_names[pi['revision']['ref_product']['value']]"
+                                    :readonly="!activetxn">
+                                </q-input>
+                            </div>
+                            <div class="col">
                                 <q-input bg-color="white" label="product id"
                                     v-model="pi['revision']['ref_product']['value']" :readonly="!activetxn">
                                 </q-input>
@@ -306,8 +308,8 @@
                                     <div class="row">
                                         <div class="col">
                                             <q-btn flat label="select"
-                                                v-on:click="selected_productitem_idx=piidx; selected_tariffitem_idx=tiidx;selected_tariffitem[piidx+1][tiidx+1]=true"
-                                                color="primary" v-if="!selected_tariffitem[piidx+1][tiidx+1]"></q-btn>
+                                                v-on:click="selected_productitem_idx=piidx; selected_tariffitem_idx=tiidx;tariffitem_selections[piidx+1][tiidx+1]=true"
+                                                color="primary" v-if="!tariffitem_selections[piidx+1][tiidx+1]"></q-btn>
                                             <q-btn flat label="calculator"
                                                 v-on:click="opendialogue=true; selected_productitem_idx=piidx; selected_tariffitem_idx=tiidx"
                                                 color=primary v-else></q-btn>
@@ -367,14 +369,16 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col">
-                                                        <q-select label="ref_role"
-                                                            v-model="tipr['rev']['ref_role']['value']" :options="[1,2]"
+                                                        <q-select label="ref_role" bg-color="white"
+                                                            v-model="tipr['rev']['ref_role']['value']"
+                                                            :options="rolesTariffItemPartner" emit-value
                                                             v-if="activetxn">
                                                         </q-select>
                                                     </div>
                                                     <div class="col">
                                                         <q-input bg-color="white" label="ref_role"
-                                                            v-model="tipr['rev']['ref_role']['value']" :readonly="true">
+                                                            v-model="rolesTariffItemPartner[tipr['rev']['ref_role']['value']-1]['label']"
+                                                            :readonly="true">
                                                         </q-input>
                                                     </div>
                                                     <div class="col">
@@ -439,9 +443,10 @@
                             </div>
                         </div>
                     </q-card-section><q-card-actions align="right" class="text-primary">
-                        <q-btn label="sync" color="primary" v-on:click="sync=true" :readonly="!validated" />
+                        <q-btn label="sync" color="primary" v-on:click="sync=true" :disable="!validated" />
+                        <q-btn label="load contract" color="primary" v-on:click="loadca=true" />
                         <q-btn flat label="Close" v-close-popup />
-                        <q-btn label="calculate" color="primary" v-on:click="calculate=true" :readonly="!validated" />
+                        <q-btn label="calculate" color="primary" v-on:click="calculate=true" :disable="!validated" />
                     </q-card-actions></q-card>
             </q-dialog>
 

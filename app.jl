@@ -17,6 +17,10 @@ import LifeInsuranceContracts: tostruct, find, SQLWhereExpression,
 include("treeedit.jl")
 
 CS_UNDO = Stack{Dict{String,Any}}()
+function validate_calcargs(args::Dict{String,Any})
+  fn = args["calculation_target"]["selected"]
+  mapreduce(def -> !(isnothing(def.second["value"]) || def.second["value"] == ""), &, args["calculation_target"][fn])
+end
 
 @handlers begin
   @out activetxn::Bool = false
@@ -34,6 +38,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @in selected_partner_idx::Integer = -1
   @out products::Vector{Product} = []
   @out product_ids::Vector{Dict{String,Any}} = []
+  @out product_names::Dict{Integer,String} = Dict()
   @out current_product::Product = Product()
   @in selected_product_idx::Integer = -1
   @in new_contract_partner_role::Integer = 0
@@ -41,7 +46,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @in selected_contractpartner_idx::Integer = -1
   @in selected_productitem_idx::Integer = -1
   @in selected_tariffitem_idx::Integer = -1
-  @in selected_tariffitem::Dict{Integer,Dict{Integer,Bool}} = Dict(0 => Dict(0 => false))
+  @in tariffitem_selections::Dict{Integer,Dict{Integer,Bool}} = Dict()
   @in new_tariffitem_partner::Dict{Integer,Integer} = Dict()
   @in selected_version::String = ""
   @out current_version::Integer = 0
@@ -75,6 +80,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
   @in tariffcalculation::Dict{String,Any} = get_tariff_interface(Val(0)).calls
   @in calculate::Bool = false
   @in sync::Bool = false
+  @in loadca::Bool = false
   @out validated::Bool = false
   @in opendialogue::Bool = false
   @out tariff_interface_id::Integer = 0
@@ -97,6 +103,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
     for p in get_products()
       rev = prsection(p.id.value, now(tz"UTC"), now(tz"UTC"), 0).revision
       push!(product_ids, Dict("label" => rev.description, "value" => rev.id.value))
+      product_names[rev.id.value] = rev.description
     end
     push!(product_ids, Dict("label" => "none", "value" => 0))
     try
@@ -245,9 +252,9 @@ CS_UNDO = Stack{Dict{String,Any}}()
           cs["loaded"] = "true"
         end
         for pi in 1:length(cs["product_items"])
-          selected_tariffitem[pi] = Dict()
-          for ti in 1:length(cs["product_items"][pi])
-            selected_tariffitem[pi][ti] = false
+          tariffitem_selections[pi] = Dict()
+          for ti in 1:length(cs["product_items"][pi]["tariff_items"])
+            tariffitem_selections[pi][ti] = false
           end
         end
         selected_tariffitem_idx = -1
@@ -332,15 +339,15 @@ CS_UNDO = Stack{Dict{String,Any}}()
     if selected_tariffitem_idx != -1
       @info "gleich tariff_interface_id=@="
       @show selected_tariffitem_idx
-      for p in keys(selected_tariffitem)
-        for t in keys(selected_tariffitem[p])
-          selected_tariffitem[p][t] = false
+      for p in keys(tariffitem_selections)
+        for t in keys(tariffitem_selections[p])
+          tariffitem_selections[p][t] = false
         end
       end
       @info "nach reset"
-      @show selected_tariffitem
-      selected_tariffitem[selected_productitem_idx+1][selected_tariffitem_idx+1] = true
-      @show selected_tariffitem
+      @show tariffitem_selections
+      tariffitem_selections[selected_productitem_idx+1][selected_tariffitem_idx+1] = true
+      @show tariffitem_selections
       @info "setting tariff_interface_id"
       tariff_interface_id = cs["product_items"][selected_productitem_idx+1]["tariff_items"][selected_tariffitem_idx+1]["tariff_ref"]["ref"]["revision"]["interface_id"]
       @show tariff_interface_id
@@ -523,12 +530,11 @@ CS_UNDO = Stack{Dict{String,Any}}()
       end
     end
   end
-  @show selected_tariffitem
-  @show tariff_interface_id
-  @show get_tariff_interface(Val(tariff_interface_id)).calls
+
   @onchange opendialogue begin
     @info "opendialogue"
     tariffcalculation = get_tariff_interface(Val(tariff_interface_id)).calls
+    validated = false
     @show tariffcalculation
     @push
   end
@@ -537,13 +543,7 @@ CS_UNDO = Stack{Dict{String,Any}}()
     if haskey(tariffcalculation, "calculation_target")
       let fn = tariffcalculation["calculation_target"]["selected"]
         if fn != "none"
-          println(fn)
-
-          for p in tariffcalculation["calculation_target"][fn]
-            @show p.first
-            @show p.second["value"]
-          end
-          validated = mapreduce(def -> !(isnothing(def.second["value"]) || def.second["value"] == ""), &, tariffcalculation["calculation_target"][fn])
+          validated = validate_calcargs(tariffcalculation)
           @show validated
         end
       end
@@ -554,13 +554,6 @@ CS_UNDO = Stack{Dict{String,Any}}()
     if sync
       @info "sync called"
       ca = cs["product_items"][selected_productitem_idx+1]["tariff_items"][selected_tariffitem_idx+1]["contract_attributes"]
-      for k in keys(ca)
-        if isnothing(ca[k])
-          println("ca nothing" * string(k))
-        else
-          println("ca " * k * " = " * string(ca[k]))
-        end
-      end
       tc = tariffcalculation["calculation_target"]
       @show tc
       tcsel = tc["selected"]
@@ -568,24 +561,72 @@ CS_UNDO = Stack{Dict{String,Any}}()
       args = tc[tcsel]
       @show args
       for k in keys(args)
-        @show args[k]
+        @info ("key= " * k)
         if haskey(ca, k)
           @show ca[k]
           if args[k]["type"] == "Int"
+            @info "int"
             @show parse(Int, args[k]["value"])
             ca[k]["value"] = parse(Int, args[k]["value"])
           else
+            @info "not int"
             @show args[k]["value"]
             ca[k]["value"] = args[k]["value"]
           end
         end
       end
       if haskey(ca, tcsel)
-        ca[tcsel]["value"] = parse(Int, args["result"]["value"])
+        ca[tcsel]["value"] = Int(round(tariffcalculation["result"]["value"]))
       end
       @show ca
+      @push
+      sync = false
+
     end
   end
+
+  @onchange loadca begin
+    try
+      if loadca
+        @info "loadca called"
+        ca = cs["product_items"][selected_productitem_idx+1]["tariff_items"][selected_tariffitem_idx+1]["contract_attributes"]
+        tc = tariffcalculation["calculation_target"]
+        @show tc
+        tcsel = tc["selected"]
+        @show tcsel
+        if tcsel != "none"
+          args = tc[tcsel]
+          @show args
+          @show ca
+          for k in keys(args)
+            @info k
+            if haskey(ca, k) && !isnothing(ca[k])
+              @show ca[k]
+              if args[k]["type"] == "Int"
+                @info "int"
+                @show ca[k]
+                args[k]["value"] = string(ca[k]["value"])
+              else
+                @info "not int"
+                @show(ca[k])
+                args[k]["value"] = string(ca[k]["value"])
+              end
+            end
+          end
+          validated = validate_calcargs(tariffcalculation)
+          @show ca
+          @show args
+          @push
+          loadca = false
+        end
+      end
+    catch err
+      @info("Exception calculating ")
+
+      @error "ERROR: " exception = (err, catch_backtrace())
+    end
+  end
+
 
   @onchange calculate begin
     if calculate
