@@ -1,3 +1,3 @@
 include("app.jl")
 using GenieFramework
-Server.up()
+Server.up(async=true)
