@@ -5,7 +5,9 @@ This is initial scaffolding for a
 * sporting bitemporal data management and
 * pluggable product data
 
-It is built with GenieBuilder, which at the moment cannot be used in GITPOD. But the app can be run as shown below.
+It is built with GenieBuilder, which at the moment cannot be used in GITPOD.
+But the app can be run in GITPOD 
+as shown below.
 To run it under GenieBuilder You have to use a non-cloud computer. This app is not runnable in Genie Cloud, as it builds on postgres
 and cannot be run with mysql.
 
