@@ -34,10 +34,8 @@ after firing up the workspace do the following (not yet done automatically):
 ## Starting the web server
 
 - on julia command line enter:
-- include("app.jl")
-- using GenieFramework
-- Server.up()
-- and then You open the ports view clicking Ports at the lower right corner of the editor window and open the browser
+- include("run.jl")
+vscode opens a browser tab for the app.
 
 BE PATIENT! Intialization takes some time. It gets reactive then!
 
