@@ -692,8 +692,8 @@ uuid = "c8f0d631-89cd-4a1f-93d0-7542c3692561"
 version = "2.3.1"
 
 [[deps.LifeInsuranceContracts]]
-deps = ["BitemporalPostgres", "Dates", "JSON", "LifeInsuranceDataModel", "LifeInsuranceProduct", "Revise", "SearchLight", "SearchLightPostgreSQL", "TimeZones", "ToStruct"]
-path = "/home/mf/dev/julia_depot/dev/LifeInsuranceContracts"
+deps = ["BitemporalPostgres", "Dates", "JSON", "LifeContingencies", "LifeInsuranceDataModel", "LifeInsuranceProduct", "MortalityTables", "Revise", "SearchLight", "SearchLightPostgreSQL", "TimeZones", "ToStruct", "Yields"]
+git-tree-sha1 = "9d7939c165350ce18cbb64a91974be287ad58ffd"
 uuid = "fd4345fa-c73f-4ad5-b086-dba238792776"
 version = "0.2.0"
 
@@ -705,9 +705,9 @@ version = "1.3.1"
 
 [[deps.LifeInsuranceProduct]]
 deps = ["BitemporalPostgres", "Dates", "JSON", "LifeContingencies", "LifeInsuranceDataModel", "MortalityTables", "NBInclude", "Revise", "SearchLight", "SearchLightPostgreSQL", "TimeZones", "ToStruct", "Yields"]
-path = "/home/mf/dev/julia_depot/dev/LifeInsuranceProduct"
+git-tree-sha1 = "4eca22b8e26b4b4693ae8f2e81c65d8dc453fca7"
 uuid = "492f22fc-54e6-4f0f-bb9b-bacd199f5046"
-version = "0.7.0"
+version = "0.8.0"
 
 [[deps.LineSearches]]
 deps = ["LinearAlgebra", "NLSolversBase", "NaNMath", "Parameters", "Printf"]
