@@ -5,6 +5,10 @@ This is initial scaffolding for a
 * sporting bitemporal data management and
 * pluggable product data
 
+It is built with GenieBuilder, which at the moment cannot be used in GITPOD. But the app can be run as shown below.
+To run it under GenieBuilder You have to use a non-cloud computer. This app is not runnable in Genie Cloud, as it builds on postgres
+and cannot be run with mysql.
+
 ## MVVM Architecture 
 This app leverages the great [Genie Framework](https://genieframework.com/)
 ### Transactions
@@ -22,30 +26,10 @@ Once a transaction is open
     * committed - provided data integrity rules are complied.
     * rolled back.
 
-This is a is a wrapper project to allow running GenieBuilder on gitpod, namely my project
-
-https://github.com/michaelfliegner/geniebuiltlifeproto
 
 # Getting ready
 
 after firing up the workspace do the following (not yet done automatically):
-
-## Initializing the environment
-
-at the terminal prompt enter:
-
-- julia --project=.
-
-  - on julia command line enter:
-    - ] instantiate
-      - wait for the precompiler, then
-      - type BACKSPACE to return from package mode
-
-## Populating the data base
-
-- on julia command line enter:
-  - include("testAPI.jl")
-  - wait for the script to populate the data base
 
 ## Starting the web server
 
@@ -54,3 +38,7 @@ at the terminal prompt enter:
 - using GenieFramework
 - Server.up()
 - and then You open the ports view clicking Ports at the lower right corner of the editor window and open the browser
+
+BE PATIENT! Intialization takes some time. It gets reactive then!
+
+Three contracts are preloaded: pension, SingleLifeRisk, JointLifeRisk
