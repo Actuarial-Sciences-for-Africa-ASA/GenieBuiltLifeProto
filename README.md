@@ -5,6 +5,12 @@ This is initial scaffolding for a
 * sporting bitemporal data management and
 * pluggable product data
 
+It is built with GenieBuilder, which at the moment cannot be used in GITPOD.
+But the app can be run in GITPOD 
+as shown below.
+To run it under GenieBuilder You have to use a non-cloud computer. This app is not runnable in Genie Cloud, as it builds on postgres
+and cannot be run with mysql.
+
 ## MVVM Architecture 
 This app leverages the great [Genie Framework](https://genieframework.com/)
 ### Transactions
@@ -21,3 +27,18 @@ Once a transaction is open
 * it can be 
     * committed - provided data integrity rules are complied.
     * rolled back.
+
+
+# Getting ready
+
+after firing up the workspace do the following (not yet done automatically):
+
+## Starting the web server
+
+- on julia command line enter:
+- include("run.jl")
+vscode opens a browser tab for the app.
+
+BE PATIENT! Intialization takes some time. It gets reactive then!
+
+Three contracts are preloaded: pension, SingleLifeRisk, JointLifeRisk
