@@ -1,46 +1,3 @@
-<!-- Output copied to clipboard! -->
-
-<!-----
-
-You have some errors, warnings, or alerts. If you are using reckless mode, turn it off to see inline alerts.
-* ERRORs: 0
-* WARNINGs: 0
-* ALERTS: 6
-
-Conversion time: 1.161 seconds.
-
-
-Using this Markdown file:
-
-1. Paste this output into your source file.
-2. See the notes and action items below regarding this conversion run.
-3. Check the rendered output (headings, lists, code blocks, tables) for proper
-   formatting and use a linkchecker before you publish this page.
-
-Conversion notes:
-
-* Docs to Markdown version 1.0β34
-* Tue Apr 18 2023 08:29:48 GMT-0700 (PDT)
-* Source doc: Projekt GenieBuiltLifeProto
-* This document has images: check for >>>>>  gd2md-html alert:  inline image link in generated source and store images to your server. NOTE: Images in exported zip file from Google Docs may not appear in  the same order as they do in your doc. Please check the images!
-
------>
-
-
-<p style="color: red; font-weight: bold">>>>>>  gd2md-html alert:  ERRORs: 0; WARNINGs: 0; ALERTS: 6.</p>
-<ul style="color: red; font-weight: bold"><li>See top comment block for details on ERRORs and WARNINGs. <li>In the converted Markdown or HTML, search for inline alerts that start with >>>>>  gd2md-html alert:  for specific instances that need correction.</ul>
-
-<p style="color: red; font-weight: bold">Links to alert messages:</p><a href="#gdcalert1">alert1</a>
-<a href="#gdcalert2">alert2</a>
-<a href="#gdcalert3">alert3</a>
-<a href="#gdcalert4">alert4</a>
-<a href="#gdcalert5">alert5</a>
-<a href="#gdcalert6">alert6</a>
-
-<p style="color: red; font-weight: bold">>>>>> PLEASE check and correct alert issues and delete this message and the inline alerts.<hr></p>
-
-
-
 # Projekt GenieBuiltLifeProto
 
 Bei diesem Projekt handelt es sich um einen Versuch, eine Grundlage für ein Open Source System zur Verwaltung von Lebensversicherungen durch einen Versicherer zu erstellen.
@@ -49,9 +6,6 @@ Bei diesem Projekt handelt es sich um einen Versuch, eine Grundlage für ein Ope
 ## Entwurfsziele
 
 dieses Projekts sind:
-
-
-
 * performante und hoch skalierende  Web App zur
     * Dialogbearbeitung von Versicherungsverträgen und
     * Bereitstellung von Services für den Betrieb
@@ -67,20 +21,15 @@ dieses Projekts sind:
 * Verwendung eines möglichst kohärenten Anwendungs-Stacks, der Tests über alle Ebenen von aktuariellen Funktionen über Persistenz bis zum Browser unterstützt, d.h. kein Umgebungsbruch, zwischen aktuarieller Produktentwicklung von und Entwicklung des Verwaltungssystems.
 * Revisionssichere Speicherung von Verträgen durch bitemporale Persistierung
 
-
 ## Funktionsumfang des Prototyps
-
 
 ### Funktionsumfang API
 
 Bitemporale CRUD- Aktionen für das gesamte Datenmodell.
 
-
 ### Funktionsumfang WebUI
 
-
 #### Funktionsbereich Search Contracts
-
 
 #### Anzeige einer Liste von Vertrags-IDs.
 
@@ -91,10 +40,7 @@ Bitemporale CRUD- Aktionen für das gesamte Datenmodell.
 </p>
 </details>
 
-
-
 Anklicken wechselt in die Anzeige der neuesten Vertragsversion.
-
 
 #### Funktionsbereich Contract Version
 
