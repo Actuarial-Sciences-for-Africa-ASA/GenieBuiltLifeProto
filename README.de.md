@@ -34,7 +34,7 @@ Bitemporale CRUD- Aktionen für das gesamte Datenmodell.
 #### Anzeige einer Liste von Vertrags-IDs.
 
 <details >
-<summary>screenshot: Contracts tab</summary>
+<summary>screenshot hier: Contracts tab</summary>
 <p>
 <img src="docs/images/image1.png" alt="Contracts">
 </p>
