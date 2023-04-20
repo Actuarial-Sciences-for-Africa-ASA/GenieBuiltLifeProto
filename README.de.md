@@ -75,6 +75,7 @@ Dieser Zustand bleibt erhalten bis
     - Kellern des Änderungsstandes (push)
     - Zurückholen des Änderungsstandes (pop)
     - Persistieren des Änderungsstandes (persist). Nach dem Persistieren 
+ist der Ändderungskeller leer.
 <details >
 <summary>screenshot: Contract version: Workflow Kommandos</summary>
 <p>
@@ -94,4 +95,5 @@ Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Tarifpositionen.
 ###### Funktionsbereich Contract Version - product items - tariff items - tariff item partnersAnklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Partnerbeziehungen zu Tariffpositionen.#### Funktionsbereich History#### Funktionsbereich Sear### Funktionsbereich Partner
 
 #### Funktionsbereich Search Product
+
 #### Funktionsbereich Product
