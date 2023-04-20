@@ -81,16 +81,17 @@ Dieser Zustand bleibt erhalten bis
 <img src="docs/images/image7.png" alt="Contracts">
 </p>
 </details>
+
 ##### Funktionsbereich Contract Version - contract partners
 Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Vertragspartnerbeziehungen.
+
 ##### Funktionsbereich Contract Version - product items
 Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Produktpositionen.
+
 ##### Funktionsbereich Contract Version - product items - tariff items
 Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Tarifpositionen.
-###### Funktionsbereich Contract Version - product items - tariff items - tariff item partners
-Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Partnerbeziehungen zu Tariffpositionen.
-#### Funktionsbereich History
-#### Funktionsbereich Search Partners
-#### Funktionsbereich Partner
+
+###### Funktionsbereich Contract Version - product items - tariff items - tariff item partnersAnklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Partnerbeziehungen zu Tariffpositionen.#### Funktionsbereich History#### Funktionsbereich Sear### Funktionsbereich Partner
+
 #### Funktionsbereich Search Product
 #### Funktionsbereich Product
