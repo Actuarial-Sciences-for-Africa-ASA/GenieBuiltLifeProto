@@ -95,7 +95,13 @@ Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Tarifpositionen.
 
 ###### Funktionsbereich Contract Version - product items - tariff items - tariff item partners
 
-Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Partnerbeziehungen zu Tariffpositionen.#### Funktionsbereich History#### Funktionsbereich Sear### Funktionsbereich Partner
+Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Partnerbeziehungen zu Tariffpositionen.
+
+#### Funktionsbereich History
+
+#### Funktionsbereich Search Partner
+
+### Funktionsbereich Partner
 
 #### Funktionsbereich Search Product
 
