@@ -1,7 +1,7 @@
 [![Work in Progress](docs/assets/wip.png)](README.md)
 [![en](https://img.shields.io/badge/lang-en-red.svg)](README.md)
-# Projekt GenieBuiltLifeProto
-Bei diesem Projekt handelt es sich um einen Versuch, eine Grundlage für ein Open Source System zur Verwaltung von Lebensversicherungen durch einen Versicherer zu erstellen.
+# Projet GenieBuiltLifeProto
+Ce projet est une tentative de créer une base pour un système open source de gestion des assurances-vie par un assureur.
 
 ## Entwurfsziele
 dieses Projekts sind:
@@ -82,13 +82,9 @@ Dieser Zustand bleibt erhalten bis
 </p>
 </details>
 ##### Funktionsbereich Contract Version - contract partners
-Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Vertragspartnerbeziehungen.
 ##### Funktionsbereich Contract Version - product items
-Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Produktpositionen.
 ##### Funktionsbereich Contract Version - product items - tariff items
-Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Tarifpositionen.
 ###### Funktionsbereich Contract Version - product items - tariff items - tariff item partners
-Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Partnerbeziehungen zu Tariffpositionen.
 #### Funktionsbereich History
 #### Funktionsbereich Search Partners
 #### Funktionsbereich Partner

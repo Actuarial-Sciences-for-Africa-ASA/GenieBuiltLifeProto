@@ -1,3 +1,7 @@
+![Work in Progress](docs/assets/wip.png)
+[![en](https://img.shields.io/badge/lang-en-red.svg)](README.md)
+[![fr](https://img.shields.io/badge/lang-fr-blue.svg)](README.fr.md)
+[![de](https://img.shields.io/badge/lang-de-green.svg)](README.de.md)
 # What is it?
 
 This is initial scaffolding for a 
