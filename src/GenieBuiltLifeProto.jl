@@ -1,6 +1,6 @@
 module GenieBuiltLifeProto
 
-using Genie
+using GenieFramework
 
 push!(LOAD_PATH, "..")
 include("../app.jl")
