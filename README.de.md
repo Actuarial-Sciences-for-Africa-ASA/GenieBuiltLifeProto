@@ -1,6 +1,10 @@
-[![Work in Progress](docs/assets/wip.png)](README.md)
 [![en](https://img.shields.io/badge/lang-en-red.svg)](README.md)
-# Projekt GenieBuiltLifeProto
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/Actuarial-Sciences-for-Africa-ASA/GenieBuiltLifeProto)
+
+![Work in Progress](docs/assets/wip.png)
+###[Installation und Start](#installation-und-start)
+
+#Projekt GenieBuiltLifeProto
 Bei diesem Projekt handelt es sich um einen Versuch, eine Grundlage für ein Open Source System zur Verwaltung von Lebensversicherungen durch einen Versicherer zu erstellen.
 
 ## Entwurfsziele
@@ -94,3 +98,24 @@ Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Partnerbeziehungen
 #### Funktionsbereich Partner
 #### Funktionsbereich Search Product
 #### Funktionsbereich Product
+
+## Installation und Start
+### Start unter gitpod
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/Actuarial-Sciences-for-Africa-ASA/GenieBuiltLifeProto)
+
+Beim Start des gitpod workspace wird die Datenbank vorinstalliert und drei Produkte / Verträge werden geladen. VS Code wird gestartet.
+
+#### Web Server starten
+In der Terminalansicht Julia starten
+    ```julia --project=.```
+und das Startskript laden>
+ ```include("run.jl")```
+Hier braucht man etwas Geduld, die Anwendung wird dann schon noch reaktiv :-).
+#### Browser Sitzung  starten
+VS Code startet automatisch eine Browsersityung. Falls nicht, die Portanzeige
+ ```Menu -> View -> Open View -> Ports```
+auswählen und den Port für den Application Web Server anklicken.
+
+BE PATIENT! Intialization takes some time. It gets reactive then!
+
+Three contracts are preloaded: pension, SingleLifeRisk, JointLifeRisk
