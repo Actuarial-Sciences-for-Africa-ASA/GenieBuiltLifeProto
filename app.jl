@@ -22,7 +22,7 @@ function validate_calcargs(args::Dict{String,Any})
   mapreduce(def -> !(isnothing(def.second["value"]) || def.second["value"] == ""), &, args["calculation_target"][fn])
 end
 
-@handlers begin
+@app begin
   @out activetxn::Bool = false
   @in command::String = ""
   @in prompt_new_txn::Bool = false
