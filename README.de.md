@@ -1,34 +1,45 @@
+# GenieBuiltLifeProto
+
 [![en](https://img.shields.io/badge/lang-en-red.svg)](README.md)
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/Actuarial-Sciences-for-Africa-ASA/GenieBuiltLifeProto)
 
 ![Work in Progress](docs/assets/wip.png)
-###[Installation und Start](#installation-und-start)
+
+## [Installation und Start](#installation-und-start)
 
 #Projekt GenieBuiltLifeProto
 Bei diesem Projekt handelt es sich um einen Versuch, eine Grundlage für ein Open Source System zur Verwaltung von Lebensversicherungen durch einen Versicherer zu erstellen.
 
 ## Entwurfsziele
+
 dieses Projekts sind:
-* performante und hoch skalierende  Web App zur
-    * Dialogbearbeitung von Versicherungsverträgen und
-    * Bereitstellung von Services für den Betrieb
+
+* performante und hoch skalierende  Web App zur* Dialogbearbeitung von Versicherungsverträgen und
+* Bereitstellung von Services für den Betrieb
 * Lauffähigkeit auf Laptops wie auf Servern
 * Nutzung von Cloud Entwicklungsumgebungen 
 * Nutzung von Kooperationsplattformenin der Cloud
 * Produkt-agnostisches Verwaltungssystem, d.h. maximale Kapselung produktspezifischen Wissens in produktspezifischen Komponenten
-    * Rechnungsgrundlagen
-    * Tariffunktionen
-    * Metadaten tariflicher Funktionen zur Nutzung in Schnittstellen für Dialoge und Services.
-    * Steuerung und Validierung von Eingaben für produktspezifische Geschäftsprozesse
+  * Rechnungsgrundlagen
+  * Tariffunktionen
+  * Metadaten tariflicher Funktionen zur Nutzung in Schnittstellen für Dialoge und Services.
+  * Steuerung und Validierung von Eingaben für produktspezifische Geschäftsprozesse
 * Verwendung einer aktuarsfreundlichen Entwicklungsumgebung hinsichtlich Programmiersprache und vorhandenen Bibliotheken
 * Verwendung eines möglichst kohärenten Anwendungs-Stacks, der Tests über alle Ebenen von aktuariellen Funktionen über Persistenz bis zum Browser unterstützt, d.h. kein Umgebungsbruch, zwischen aktuarieller Produktentwicklung von und Entwicklung des Verwaltungssystems.
 * Revisionssichere Speicherung von Verträgen durch bitemporale Persistierung
+
 ## Funktionsumfang des Prototyps
+
 ### Funktionsumfang API
+
 Bitemporale CRUD- Aktionen für das gesamte Datenmodell.
+
 ### Funktionsumfang WebUI
-#### Funktionsbereich Search Contracts
-#### Anzeige einer Liste von Vertrags-IDs.
+
+### Funktionsbereich Search Contracts
+
+### Anzeige einer Liste von Vertrags-IDs.
+
 <details >
 <summary>screenshot: Contracts tab</summary>
 <p>
@@ -37,7 +48,7 @@ Bitemporale CRUD- Aktionen für das gesamte Datenmodell.
 </details>
 Anklicken wechselt in die Anzeige der neuesten Vertragsversion.
 
-#### Funktionsbereich Contract Version
+### Funktionsbereich Contract Version
 
 Anzeige / Bearbeitung von Vertragsversionen.
 
@@ -73,57 +84,88 @@ Danach erscheint der Vertrag als in Bearbeitung.
 </details>
 
 Dieser Zustand bleibt erhalten bis
-- der Workflow abgebrochen (rollback) oder
-- vollendet wird (commit)
-- Weitere workflow-bezogene Kommandos bieten
-    - Kellern des Änderungsstandes (push)
-    - Zurückholen des Änderungsstandes (pop)
-    - Persistieren des Änderungsstandes (persist). Nach dem Persistieren 
+
+* der Workflow abgebrochen (rollback) oder
+* vollendet wird (commit)
+* Weitere workflow-bezogene Kommandos bieten
+  * Kellern des Änderungsstandes (push)
+  * Zurückholen des Änderungsstandes (pop)
+  * Persistieren des Änderungsstandes (persist). Nach dem Persistieren 
 ist der Ändderungskeller leer.
+
 <details >
 <summary>screenshot: Contract version: Workflow Kommandos</summary>
 <p>
 <img src="docs/images/image7.png" alt="Contracts">
 </p>
 </details>
+<br>
 
-##### Funktionsbereich Contract Version - contract partners
+### Funktionsbereich Contract Version - contract partners
+
 Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Vertragspartnerbeziehungen.
+<details >
+<summary>screenshot: Contract version: contract partners</summary>
+<p>
+<img src="docs/images/image8.png" alt="Contract partners">
+</p>
+</details>
 
-##### Funktionsbereich Contract Version - product items
+If the contract is mutable 
+
+* selecting a contract partner role and
+* and a partner
+
+allows to add a contract partner relation.
+<details >
+<summary>screenshot: Contract version: select contract partner role</summary>
+<p><img src="docs/images/image9.png" alt="select contract partner role"></p>
+</details>
+<details >
+<summary>screenshot: Contract version: select contract partner</summary>
+<p><img src="docs/images/image10.png" alt="select contract partner"></p>
+</details>
+
+### Funktionsbereich Contract Version - product items
+
 Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Produktpositionen.
 
-##### Funktionsbereich Contract Version - product items - tariff items
+### Funktionsbereich Contract Version - product items - tariff items
 
 Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Tarifpositionen.
 
-###### Funktionsbereich Contract Version - product items - tariff items - tariff item partners
+### Funktionsbereich Contract Version - product items - tariff items - tariff item partners
 
 Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Partnerbeziehungen zu Tariffpositionen.
 
-#### Funktionsbereich History
+### Funktionsbereich History
 
-#### Funktionsbereich Search Partner
+### Funktionsbereich Search Partner
 
 ### Funktionsbereich Partner
 
-#### Funktionsbereich Search Product
+### Funktionsbereich Search Product
 
-#### Funktionsbereich Product
+### Funktionsbereich Product
 
 ## Installation und Start
+
 ### Start unter gitpod
+
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/Actuarial-Sciences-for-Africa-ASA/GenieBuiltLifeProto)
 
 Beim Start des gitpod workspace wird die Datenbank vorinstalliert und drei Produkte / Verträge werden geladen. VS Code wird gestartet.
 
-#### Web Server starten
+### Web Server starten
+
 In der Terminalansicht Julia starten
     ```julia --project=.```
 und das Startskript laden>
  ```include("run.jl")```
 Hier braucht man etwas Geduld, die Anwendung wird dann schon noch reaktiv :-).
-#### Browser Sitzung  starten
+
+### Browser Sitzung  starten
+
 VS Code startet automatisch eine Browsersityung. Falls nicht, die Portanzeige
  ```Menu -> View -> Open View -> Ports```
 auswählen und den Port für den Application Web Server anklicken.

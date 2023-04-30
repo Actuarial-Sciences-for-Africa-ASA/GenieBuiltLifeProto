@@ -1,3 +1,4 @@
+
 image:
   file: .gitpod.Dockerfile
 tasks:
@@ -16,3 +17,6 @@ ports:
     port: 8000
     visibility: public
     onOpen: open-browser
+vscode:
+  extensions:
+    - pinage404.markdown-extension-pack
