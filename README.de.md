@@ -111,27 +111,28 @@ Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Vertragspartnerbez
 </p>
 </details>
 
-If the contract is mutable 
+Wenn der Vertrag mutierbar ist
 
-* selecting a contract partner role and
-* and a partner
+* Auswahl einer Vertragspartnerrolle und
+* eines Partners
+  
+aktivieren den Button zum Einfügen einer neuen Partnerbeziehung].
 
-allows to add a contract partner relation.
 <details >
-<summary>screenshot: Contract version: select contract partner role</summary>
+<summary>screenshot: Contract version: Auswahl Partnerrolle</summary>
 <p><img src="docs/images/image9.png" alt="select contract partner role"></p>
 </details>
 <details >
-<summary>screenshot: Contract version: select contract partner</summary>
+<summary>screenshot: Contract version: Auswahl Partner</summary>
 <p><img src="docs/images/image10.png" alt="select contract partner"></p>
 </details>
 </details>
 <details >
-<summary>screenshot: Contract version: add contract partner</summary>
+<summary>screenshot: Contract version: Button zum Einfügen einer neuen Partnerbeziehung</summary>
 <p><img src="docs/images/image11.png" alt="add contract partner"></p>
 </details>
 <details >
-<summary>screenshot: Contract version: contract partner added</summary>
+<summary>screenshot: Contract version: Neue Partnerbeyiehung eingefügt</summary>
 <p><img src="docs/images/image12.png" alt="contract partner added"></p>
 </details>
 
