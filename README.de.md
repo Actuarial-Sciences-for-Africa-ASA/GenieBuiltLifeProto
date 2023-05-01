@@ -125,6 +125,15 @@ allows to add a contract partner relation.
 <summary>screenshot: Contract version: select contract partner</summary>
 <p><img src="docs/images/image10.png" alt="select contract partner"></p>
 </details>
+</details>
+<details >
+<summary>screenshot: Contract version: add contract partner</summary>
+<p><img src="docs/images/image11.png" alt="add contract partner"></p>
+</details>
+<details >
+<summary>screenshot: Contract version: contract partner added</summary>
+<p><img src="docs/images/image12.png" alt="contract partner added"></p>
+</details>
 
 ### Funktionsbereich Contract Version - product items
 
