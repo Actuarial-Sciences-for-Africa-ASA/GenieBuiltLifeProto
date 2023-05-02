@@ -670,9 +670,21 @@ end
       current_contract = Contract()
       contracts = get_contracts()
       let df = SearchLight.query("select distinct c.id, w.is_committed from contracts c join histories h on c.ref_history = h.id join workflows w on w.ref_history = h.id ")
-        contract_ids = Dict(Pair.(df.id, df.is_committed))
+        for p in Pair.(df.id, df.is_committed)
+          println(p)
+          if haskey(contract_ids, p.first)
+            if p.second == 0
+              contract_ids[p.first] = 0
+            end
+          else
+            contract_ids[p.first] = p.second
+          end
+        end
       end
+
+
       @show contract_ids
+      @push
       @info "contractsModel pushed"
     end
 
