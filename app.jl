@@ -358,6 +358,15 @@ end
     end
   end
 
+  @onchange new_contract_partner begin
+    @show new_contract_partner
+  end
+
+  @onchange new_contract_partner_role begin
+    @show new_contract_partner_role
+  end
+
+
   @onchange command begin
     if command != ""
 
@@ -396,7 +405,8 @@ end
         if command == "add contractpartner"
           @show command
           @show cs["partner_refs"]
-
+          @show new_contract_partner_role
+          @show new_contract_partner
 
           cprj = JSON.parse(serialize(ContractPartnerReference(
             rev=ContractPartnerRefRevision(ref_role=DbId(new_contract_partner_role), ref_partner=DbId(new_contract_partner)),

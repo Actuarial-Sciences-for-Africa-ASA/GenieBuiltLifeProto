@@ -217,14 +217,13 @@
                                 </q0input>
                         </div>
                         <div class="col">
-                            <q-select bg-color="white" label="parshow 0tner_role sel"
-                                v-model="new_contract_partner_role" :options="rolesContractPartner" emit-value
-                                map-options :readonly="!activetxn">
+                            <q-select bg-color="white" label="ref_partner_role sel" v-model="new_contract_partner_role"
+                                :options="rolesContractPartner" emit-value map-options :readonly="!activetxn">
                             </q-select>
                         </div>
                         <div class="col">
                             <q-select bg-color="white" label="ref_partner sel" v-model="new_contract_partner"
-                                :options="partner_ids" :readonly="!activetxn">
+                                :options="partner_ids" emit-value map-options :readonly="!activetxn">
                             </q-select>
                         </div>
                     </div>
