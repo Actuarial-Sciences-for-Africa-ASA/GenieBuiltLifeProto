@@ -2,7 +2,7 @@
 
 julia_version = "1.8.2"
 manifest_format = "2.0"
-project_hash = "056d2511ecfe4a4203f065774eb3a6d633665a92"
+project_hash = "60385c661dd55e0cbf474c9748fd2d972cc44ba9"
 
 [[deps.AbstractTrees]]
 git-tree-sha1 = "faa260e4cb5aba097a73fab382dd4b5819d8ec8c"
@@ -696,7 +696,7 @@ version = "2.3.1"
 deps = ["BitemporalPostgres", "Dates", "JSON", "LifeContingencies", "LifeInsuranceDataModel", "LifeInsuranceProduct", "MortalityTables", "Revise", "SearchLight", "SearchLightPostgreSQL", "TimeZones", "ToStruct", "Yields"]
 path = "/home/mf/dev/julia_depot/dev/LifeInsuranceContracts"
 uuid = "fd4345fa-c73f-4ad5-b086-dba238792776"
-version = "0.2.0"
+version = "0.3.0"
 
 [[deps.LifeInsuranceDataModel]]
 deps = ["BitemporalPostgres", "ColorSchemes", "DataFrames", "DataStructures", "Dates", "Intervals", "JSON", "LibPQ", "Logging", "NBInclude", "Pkg", "Revise", "SearchLight", "SearchLightPostgreSQL", "Test", "TimeZones", "ToStruct"]
@@ -1195,7 +1195,7 @@ version = "1.3.0"
 deps = ["Dates", "FilePathsBase", "Genie", "GenieSession", "GenieSessionFileSession", "JSON3", "Logging", "MacroTools", "Mixers", "Observables", "OrderedCollections", "Parameters", "Pkg", "Random", "Reexport", "Requires", "StructTypes"]
 git-tree-sha1 = "812363182809f4fd4aff418173eb0d0097cbb72f"
 repo-rev = "hh-precompile"
-repo-url = "https://github.com/GenieFramework/Stipple.jl.git"
+repo-url = "https://github.com/GenieFramework/Stipple.jl"
 uuid = "4acbeb90-81a0-11ea-1966-bdaff8155998"
 version = "0.26.3"
 

@@ -10,7 +10,7 @@
 #Projekt GenieBuiltLifeProto
 Bei diesem Projekt handelt es sich um einen Versuch, eine Grundlage für ein Open Source System zur Verwaltung von Lebensversicherungen durch einen Versicherer zu erstellen.
 
-## Entwurfsziele
+## 1. Entwurfsziele
 
 dieses Projekts sind:
 
@@ -28,17 +28,17 @@ dieses Projekts sind:
 * Verwendung eines möglichst kohärenten Anwendungs-Stacks, der Tests über alle Ebenen von aktuariellen Funktionen über Persistenz bis zum Browser unterstützt, d.h. kein Umgebungsbruch, zwischen aktuarieller Produktentwicklung von und Entwicklung des Verwaltungssystems.
 * Revisionssichere Speicherung von Verträgen durch bitemporale Persistierung
 
-## Funktionsumfang des Prototyps
+## 2. Funktionsumfang des Prototyps
 
-### Funktionsumfang API
+### 2.1 Funktionsumfang API
 
 Bitemporale CRUD- Aktionen für das gesamte Datenmodell.
 
-### Funktionsumfang WebUI
+### 2.2 Funktionsumfang WebUI
 
-### Funktionsbereich Search Contracts
+### 2.2.1 Funktionsbereich Search Contracts
 
-### Anzeige einer Liste von Vertrags-IDs.
+#### Anzeige einer Liste von Vertrags-IDs.
 
 <details >
 <summary>screenshot: Contracts tab</summary>
@@ -48,9 +48,9 @@ Bitemporale CRUD- Aktionen für das gesamte Datenmodell.
 </details>
 Anklicken wechselt in die Anzeige der neuesten Vertragsversion.
 
-### Funktionsbereich Contract Version
+### 2.2.2 Funktionsbereich Contract Version
 
-Anzeige / Bearbeitung von Vertragsversionen.
+#### Anzeige / Bearbeitung von Vertragsversionen.
 
 Das Bearbeiten erfordert einen aktiven Workflow (Transaktion). Dieser entsteht durch Anlegen eines neuen Vertrags, oder durch Eröffnen einer Vertragsmutation.
 
@@ -82,6 +82,12 @@ Danach erscheint der Vertrag als in Bearbeitung.
 <img src="docs/images/image6.png" alt="Contracts">
 </p>
 </details>
+<details >
+<summary>screenshot: Contract search: mutable contracts shown in red</summary>
+<p>
+<img src="docs/images/image6a.png" alt="Contracts">
+</p>
+</details>
 
 Dieser Zustand bleibt erhalten bis
 
@@ -101,7 +107,7 @@ ist der Ändderungskeller leer.
 </details>
 <br>
 
-### Funktionsbereich Contract Version - contract partners
+### 2.2.1 Funktionsbereich Contract Version - contract partners
 
 Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Vertragspartnerbeziehungen.
 <details >
@@ -132,41 +138,68 @@ aktivieren den Button zum Einfügen einer neuen Partnerbeziehung].
 <p><img src="docs/images/image11.png" alt="add contract partner"></p>
 </details>
 <details >
-<summary>screenshot: Contract version: Neue Partnerbeyiehung eingefügt</summary>
+<summary>screenshot: Contract version: Neue Partnerbeziehung eingefügt</summary>
 <p><img src="docs/images/image12.png" alt="contract partner added"></p>
 </details>
 
-### Funktionsbereich Contract Version - product items
+### 2.2.2  Funktionsbereich Contract Version - product items
 
 Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Produktpositionen.
-
-### Funktionsbereich Contract Version - product items - tariff items
+<details >
+<summary>screenshot: product items expanded</summary>
+<p>
+<img src="docs/images/image13.png" alt="product items">
+</p>
+</details>
+### 2.2.2.1 Funktionsbereich Contract Version - product items - tariff items
 
 Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Tarifpositionen.
 
-### Funktionsbereich Contract Version - product items - tariff items - tariff item partners
+<details >
+<summary>screenshot: tariff items expanded</summary>
+<p>
+<img src="docs/images/image14.png" alt="tariff items">
+</p>
+</details>
+
+Anklicken des Buttons "select" ändert den Button in "calculator"
+<details >
+<summary>screenshot: tariff item selected </summary>
+<p>
+<img src="docs/images/image15.png" alt="tariff item selected">
+</p>
+</details>
+Anklicken des Buttons "calculator" öffnet das Berechnunsfenster:
+<details >
+<summary>screenshot: tariff item calculator opened </summary>
+<p>
+<img src="docs/images/image16.png" alt="tariff item calculator">
+</p>
+</details> 
+
+### 2.2.2.1.1 Funktionsbereich Contract Version - product items - tariff items - tariff item partners
 
 Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Partnerbeziehungen zu Tariffpositionen.
 
-### Funktionsbereich History
+### 2.3 Funktionsbereich History
 
-### Funktionsbereich Search Partner
+### 2.4 Funktionsbereich Search Partner
 
-### Funktionsbereich Partner
+### 2.5 Funktionsbereich Partner
+Anzeige / Bearbeitung von Vertragsversion 
+### 2.6 Funktionsbereich Search Product
 
-### Funktionsbereich Search Product
+### 2.7 Funktionsbereich Product
 
-### Funktionsbereich Product
+## 3 Installation und Start
 
-## Installation und Start
-
-### Start unter gitpod
+### 3.1 Start unter gitpod
 
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/Actuarial-Sciences-for-Africa-ASA/GenieBuiltLifeProto)
 
 Beim Start des gitpod workspace wird die Datenbank vorinstalliert und drei Produkte / Verträge werden geladen. VS Code wird gestartet.
 
-### Web Server starten
+### 3.1.1 Web Server starten
 
 In der Terminalansicht Julia starten
     ```julia --project=.```
@@ -174,7 +207,7 @@ und das Startskript laden>
  ```include("run.jl")```
 Hier braucht man etwas Geduld, die Anwendung wird dann schon noch reaktiv :-).
 
-### Browser Sitzung  starten
+### 3.1.2 Browser Sitzung  starten
 
 VS Code startet automatisch eine Browsersityung. Falls nicht, die Portanzeige
  ```Menu -> View -> Open View -> Ports```
