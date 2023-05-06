@@ -156,7 +156,7 @@ Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Produktpositionen.
 Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Tarifpositionen.
 
 <details >
-<summary>screenshot: tariff items expanded</summary>
+<summary>screenshot: Tarifpositionen aufgeklappt</summary>
 <p>
 <img src="docs/images/image14.png" alt="tariff items">
 </p>
@@ -164,18 +164,62 @@ Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Tarifpositionen.
 
 Anklicken des Buttons "select" ändert den Button in "calculator"
 <details >
-<summary>screenshot: tariff item selected </summary>
+<summary>screenshot: Tarifposition selektiert </summary>
 <p>
 <img src="docs/images/image15.png" alt="tariff item selected">
 </p>
 </details>
-Anklicken des Buttons "calculator" öffnet das Berechnunsfenster:
+
+Anklicken des Buttons "calculator" Berechnungsfensteröffnet das Berechnungsfenster:
 <details >
-<summary>screenshot: tariff item calculator opened </summary>
+<summary>screenshot: Tarifrechner gestartet </summary>
 <p>
 <img src="docs/images/image16.png" alt="tariff item calculator">
 </p>
 </details> 
+Es können verschiedene Berechnungsziele vorgegeben werden.
+<details >
+<summary>screenshot: Tarifrechner gestartet </summary>
+<p>
+<img src="docs/images/image17.png" alt="input calculation target">
+</p>
+</details>
+
+Nach Vorgabe des Berechnungsziels können die Parameter eingegeben werden.
+<details>
+<summary>screenshot: Berechnungsziel vorgegeben </summary>
+<p>
+<img src="docs/images/image18.png" alt="calculation target determined">
+</p>
+</details>
+
+Eingabedialog 
+
+<details >
+<summary>screenshot: Eingabedialog </summary>
+<p>
+<img src="docs/images/image19.png" alt="calculation target determined">
+</p>
+</details>
+
+
+Wenn alle obligatorischen Parameter belegt sind, kann gerechnet werden.
+<details >
+<summary>screenshot: Berechnungsaufruf </summary>
+<p>
+<img src="docs/images/image20.png" alt="calculation callable">
+</p><p>
+<img src="docs/images/image21.png" alt="calculation called">
+</p>
+</details>
+
+Parameter und Berechnungsergebnis können in die entsprechenden, d.h. ggf. vorhandenen gleichnamigen, Vertragsfelder synchroniert werden
+<details >
+<summary>screenshot: Syunchronisierung mit dem Vertragsstand </summary>
+<p>
+<img src="docs/images/image22.png" alt="calculation callable">
+</p>
+</details>
 
 ### 2.2.2.1.1 Funktionsbereich Contract Version - product items - tariff items - tariff item partners
 
