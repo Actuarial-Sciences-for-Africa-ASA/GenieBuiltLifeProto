@@ -438,7 +438,9 @@
                         </div>
                     </q-card-section><q-card-actions align="right" class="text-primary">
                         <q-btn label="sync" color="primary" v-on:click="sync=true" :disable="!validated" />
-                        <q-btn label="load contract" color="primary" v-on:click="loadca=true" />
+                        target is {{tariffcalculation['calculation_target']['selected']}}
+                        <q-btn label="load contract" color="primary" v-on:click="loadca=true"
+                            :disable="tariffcalculation['calculation_target']['selected'] == 'none'" />
                         <q-btn flat label="Close" v-close-popup />
                         <q-btn label="calculate" color="primary" v-on:click="calculate=true" :disable="!validated" />
                     </q-card-actions></q-card>

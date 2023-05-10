@@ -518,7 +518,7 @@ end
     if selected_version != ""
       @show tab
       try
-        node = fn(histo, selected_version)
+        node = get_node_by_label(histo, selected_version)
         @info "node"
         @show node
         activetxn = (node["interval"]["is_committed"] == 0 ? true : false)
@@ -627,8 +627,9 @@ end
           validated = validate_calcargs(tariffcalculation)
           @show ca
           @show args
-          @push
           loadca = false
+          @push
+
         end
       end
     catch err

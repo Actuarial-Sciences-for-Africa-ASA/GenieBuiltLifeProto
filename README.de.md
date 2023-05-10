@@ -215,7 +215,7 @@ Wenn alle obligatorischen Parameter belegt sind, kann gerechnet werden.
 
 Parameter und Berechnungsergebnis können in die entsprechenden, d.h. ggf. vorhandenen gleichnamigen, Vertragsfelder synchroniert werden
 <details >
-<summary>screenshot: Syunchronisierung mit dem Vertragsstand </summary>
+<summary>screenshot: Synchronisierung mit dem Vertragsstand </summary>
 <p>
 <img src="docs/images/image22.png" alt="calculation callable">
 </p>
@@ -224,8 +224,40 @@ Parameter und Berechnungsergebnis können in die entsprechenden, d.h. ggf. vorha
 ### 2.2.2.1.1 Funktionsbereich Contract Version - product items - tariff items - tariff item partners
 
 Anklicken öffnet den Abschnitt zur Anzeige / Bearbeitung von Partnerbeziehungen zu Tariffpositionen.
-
+<details >
+<summary>screenshot: Tarifpositionspartner </summary>
+<p>
+<img src="docs/images/image23.png" alt="tariff item partners">
+</p>
+</details>
 ### 2.3 Funktionsbereich History
+Anklicken eines Versionsknoten öffnet die Versionsansicht
+<details >
+<summary>screenshot: Auswahl Version </summary>
+<p>
+<img src="docs/images/image24.png" alt="choose uncommitted workflow">
+</p>
+<p>
+<img src="docs/images/image6.png" alt="show uncommited workflow">
+</p>
+<p>
+<img src="docs/images/image25.png" alt="choose committed workflow">
+</p>
+<p>
+<img src="docs/images/image4.png" alt="show committed workflow">
+</p>
+</details>
+
+Rückwirkende Mutationen verschatten früher erfasste Mutationen mit gleichem oder späterem Gültigkeitsbeginn.
+<details >
+<summary>screenshot: Rückwirkende Transaktion</summary>
+<p>
+<img src="docs/images/image26.png" alt="retroactive Transaction">
+</p>
+<p>
+<img src="docs/images/image27.png" alt="select shadowed Transaction">
+</p>
+</details>
 
 ### 2.4 Funktionsbereich Search Partner
 
