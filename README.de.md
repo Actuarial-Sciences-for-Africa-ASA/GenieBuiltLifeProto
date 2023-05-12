@@ -318,6 +318,7 @@ Dieses Feld definiert die dynamischen Attribute der Tarifpositionen.
 
 ## 3 Installation und Start
 
+Das Package braucht eine POSTGRES-Datenbank, den [Konfigurationsordner](db) und Produktdaten [siehe: testSkript](testAPI.jl)
 ### 3.1 Start unter gitpod
 
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/Actuarial-Sciences-for-Africa-ASA/GenieBuiltLifeProto)

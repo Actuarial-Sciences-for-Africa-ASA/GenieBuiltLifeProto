@@ -322,6 +322,7 @@ Ce champ définit les attributs dynamiques des postes tarifaires.
 
 ## 3 installation et démarrage
 
+Le paquet a besoin d'une base de données POSTGRES, du [dossier de configuration](db) et des données du produit [voir : testScript](testAPI.jl)
 ### 3.1 Démarrage sous gitpod
 
 [ ![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/Actuarial-Sciences-for-Africa-ASA/GenieBuiltLifeProto)
