@@ -259,14 +259,62 @@ Rückwirkende Mutationen verschatten früher erfasste Mutationen mit gleichem od
 </p>
 </details>
 
-### 2.4 Funktionsbereich Search Partner
+### 2.3.1 Funktionsbereich Search Partner
+#### Anzeige einer Liste von Partner-IDs.
 
-### 2.5 Funktionsbereich Partner
-Anzeige / Bearbeitung von Vertragsversion 
-### 2.6 Funktionsbereich Search Product
+<details >
+<summary>screenshot: Partners tab</summary>
+<p>
+<img src="docs/images/image28.png" alt="Partners">
+</p>
+</details>
+Anklicken wechselt in die Anzeige der neuesten Partnerversion.
 
-### 2.7 Funktionsbereich Product
+### 2.3.2 Funktionsbereich Partner
 
+Anzeige Partnerversion 
+Die Partnerverwaltung ist rudimentär. Sie enthäĺt nur die tarifrelevanten Partnerdaten und eine Bearbeitung ist in der Webapp nicht möglich, nur über das Vertrags-API [Beispiel: hier ](testAPI.jl)
+<details >
+<summary>screenshot: Partnerversions tab</summary>
+<p>
+<img src="docs/images/image29.png" alt="Partner">
+</p>
+</details>
+
+### 2.3.3 Funktionsbereich Search Product
+#### Anzeige einer Liste von Product-IDs.
+
+<details >
+<summary>screenshot: Products tab</summary>
+<p>
+<img src="docs/images/image30.png" alt="Products">
+</p>
+</details>
+Anklicken wechselt in die Anzeige der neuesten Partnerversion.
+
+### 2.3.4 Funktionsbereich Product
+
+Anzeige Produktversion 
+Die Produktverwaltung ist rudimentär. Sie enthäĺt nur die tarifrelevanten Partnerdaten und eine Bearbeitung ist in der Webapp nicht möglich, nur über das Vertrags-API [Beispiel: hier ](testAPI.jl)
+
+#### 2.3.4.1 Funktionsbereich Product - Feld tariff parameters
+
+Die Semantik dieses Felds wird aus den Tarif-Debuggerskripten klar.
+
+[Pension](debugcalcPEN.jl)
+[SingleLifeRisk](debugcalcSLR.jl)
+[JointLifeRisk](debugcalcJLR.jl)
+
+#### 2.3.4.2 Funktionsbereich Product - Feld contract attributes
+
+Dieses Feld definiert die dynamischen Attribute der Tarifpositionen.
+
+<details >
+<summary>screenshot: Productversion tab</summary>
+<p>
+<img src="docs/images/image31.png" alt="Partner">
+</p>
+</details>
 ## 3 Installation und Start
 
 ### 3.1 Start unter gitpod
@@ -289,6 +337,6 @@ VS Code startet automatisch eine Browsersityung. Falls nicht, die Portanzeige
  ```Menu -> View -> Open View -> Ports```
 auswählen und den Port für den Application Web Server anklicken.
 
-BE PATIENT! Intialization takes some time. It gets reactive then!
+BE PATIENT! Initialization takes some time. It gets reactive then!
 
 Three contracts are preloaded: pension, SingleLifeRisk, JointLifeRisk
