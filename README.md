@@ -6,7 +6,7 @@
 
 ## [installation and start](#3-installation-and-startup)
 
-#Projekt GenieBuiltLifeProto
+# Projekt GenieBuiltLifeProto
 This project is an attempt to create a foundation for an open source system for managing life insurance policies by an insurer.
 
 ### 1. design goals

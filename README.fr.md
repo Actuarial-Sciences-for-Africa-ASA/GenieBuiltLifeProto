@@ -8,7 +8,7 @@
 
 ## [installation et démarrage](#3-installation-et-démarrage)
 
-#Projekt GenieBuiltLifeProto
+# Projekt GenieBuiltLifeProto
 Ce projet est une tentative de créer les bases d'un système open source pour la gestion des polices d'assurance-vie par un assureur.
 
 ### 1. objectifs de conception
@@ -322,7 +322,7 @@ Ce champ définit les attributs dynamiques des postes tarifaires.
 
 ## 3 installation et démarrage
 
-Le paquet a besoin d'une base de données POSTGRES, du [dossier de configuration](db) et des données du produit [voir : testScript](testAPI.jl)
+Le paquet a besoin d'une base de données POSTGRES, du [dossier de configuration](db) et des données du produit [voir : testScript](testAPI.jl)hghg
 ### 3.1 Démarrage sous gitpod
 
 [ ![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/Actuarial-Sciences-for-Africa-ASA/GenieBuiltLifeProto)

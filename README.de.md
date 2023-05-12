@@ -7,7 +7,7 @@
 
 ## [Installation und Start](#3-installation-und-start)
 
-#Projekt GenieBuiltLifeProto
+# Projekt GenieBuiltLifeProto
 Bei diesem Projekt handelt es sich um einen Versuch, eine Grundlage für ein Open Source System zur Verwaltung von Lebensversicherungen durch einen Versicherer zu erstellen.
 
 ## 1. Entwurfsziele
