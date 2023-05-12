@@ -1,7 +1,7 @@
 name = "GenieBuiltLifeProto"
 uuid = "9e6ec31a-4cef-4def-9440-f7db695aa5a5"
 authors = ["Kaeptenblaubaer <michelkannfliegen@gmail.com>"]
-version = "0.1.0"
+version = "1.0.0"
 
 [deps]
 BitemporalPostgres = "e513cd14-23e6-48df-acf1-d9bc8fa5674b"

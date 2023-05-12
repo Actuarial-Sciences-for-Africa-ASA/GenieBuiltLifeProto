@@ -4,7 +4,7 @@
 [![de](https://img.shields.io/badge/lang-de-green.svg)](README.de.md)
 
 
-## [Installation und Start](#installation-und-start)
+## [installation and start](#3-installation-and-startup)
 
 #Projekt GenieBuiltLifeProto
 This project is an attempt to create a foundation for an open source system for managing life insurance policies by an insurer.
@@ -318,8 +318,9 @@ This field defines the dynamic attributes of the tariff items.
 </p>
 </details>
 
-## 3 Installation and startup
+## 3 installation and startup
 
+The package needs a POSTGRES database, the [configuration folder](db) and product data [see: testScript](testAPI.jl)
 ### 3.1 Start under gitpod
 
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/Actuarial-Sciences-for-Africa-ASA/GenieBuiltLifeProto)

@@ -5,7 +5,7 @@
 
 ![Work in Progress](docs/assets/wip.png)
 
-## [Installation und Start](#installation-und-start)
+## [Installation und Start](#3-installation-und-start)
 
 #Projekt GenieBuiltLifeProto
 Bei diesem Projekt handelt es sich um einen Versuch, eine Grundlage für ein Open Source System zur Verwaltung von Lebensversicherungen durch einen Versicherer zu erstellen.
@@ -315,6 +315,7 @@ Dieses Feld definiert die dynamischen Attribute der Tarifpositionen.
 <img src="docs/images/image31.png" alt="Partner">
 </p>
 </details>
+
 ## 3 Installation und Start
 
 ### 3.1 Start unter gitpod
