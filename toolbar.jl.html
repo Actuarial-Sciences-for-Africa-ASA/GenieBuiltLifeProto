@@ -9,6 +9,9 @@
                 <q-item clickable="" v-close-popup="" v-on:click="command='persist'" v-if="activetxn">
                     <q-item-section>Persist changes</q-item-section>
                 </q-item>
+                <q-item clickable="" v-close-popup="" v-on:click="command='validate'" v-if="activetxn">
+                    <q-item-section>Validate changes</q-item-section>
+                </q-item>
                 <q-item clickable="" v-close-popup="" v-on:click="command='push'" v-if="activetxn">
                     <q-item-section>Push changes</q-item-section>
                 </q-item>

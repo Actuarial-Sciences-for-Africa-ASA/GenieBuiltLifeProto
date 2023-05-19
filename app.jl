@@ -78,7 +78,7 @@ end
   @out rolesTariffItem::Vector{Dict{String,Any}} = []
   @out rolesTariffItemPartner::Vector{Dict{String,Any}} = []
   # tariff calculations
-  @in tariffcalculation::Dict{String,Any} = get_tariff_interface(Val(0)).calls
+  @in tariffcalculation::Dict{String,Any} = get_tariff_interface(0).calls
   @in calculate::Bool = false
   @in sync::Bool = false
   @in loadca::Bool = false
@@ -487,6 +487,13 @@ end
           cs["loaded"] = "true"
           @push
         end
+        if command == "validate"
+          @show command
+          for pij in cs["product_items"]
+            validate(tostruct(ProductItemSection, pij))
+
+          end
+        end
         if command == "commit"
           @show command
           @show current_workflow
@@ -544,7 +551,7 @@ end
 
   @onchange opendialogue begin
     @info "opendialogue"
-    tariffcalculation = get_tariff_interface(Val(tariff_interface_id)).calls
+    tariffcalculation = get_tariff_interface(tariff_interface_id).calls
     validated = false
     @show tariffcalculation
     @push

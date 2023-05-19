@@ -16,7 +16,7 @@ ti = cs.product_items[1].tariff_items[1]
 tariffparms = JSON.parse(ti.tariff_ref.ref.revision.parameters)
 println(tariffparms)
 interface_id = ti.tariff_ref.ref.revision.interface_id
-tif = get_tariff_interface(Val(interface_id))
+tif = get_tariff_interface(interface_id)
 tgt = tif.calls["calculation_target"]
 tgt["selected"] = "net premium"
 parms = tgt[tgt["selected"]]
