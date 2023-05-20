@@ -653,13 +653,13 @@ end
       @info "calculating"
       try
         @show tariff_interface_id
-        calculator = get_tariff_interface(Val(tariff_interface_id)).calculator
+        calculator = get_tariff_interface(tariff_interface_id).calculator
         @show selected_productitem_idx
         @show selected_tariffitem_idx
         ti = tostruct(TariffItemSection, cs["product_items"][selected_productitem_idx+1]["tariff_items"][selected_tariffitem_idx+1])
         @info "vor calc"
         @show tariffcalculation
-        calculator(tariff_interface_id, ti, tariffcalculation)
+        calculator(ti, tariffcalculation)
         @push
       catch err
         @info("Exception calculating ")

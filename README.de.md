@@ -301,9 +301,9 @@ Die Produktverwaltung ist rudimentär. Sie enthäĺt nur die tarifrelevanten Par
 
 Die Semantik dieses Felds wird aus den Tarif-Debuggerskripten klar.
 
-[Pension](debugcalcPEN.jl)
-[SingleLifeRisk](debugcalcSLR.jl)
-[JointLifeRisk](debugcalcJLR.jl)
+[Pension](https://github.com/Actuarial-Sciences-for-Africa-ASA/LifeInsuranceProduct.jl/blob/main/testCalPEN.jl)
+[SingleLifeRisk](https://github.com/Actuarial-Sciences-for-Africa-ASA/LifeInsuranceProduct.jl/blob/main/testCalcSLR.jl)
+[JointLifeRisk](https://github.com/Actuarial-Sciences-for-Africa-ASA/LifeInsuranceProduct.jl/blob/main/testCalcJLR.jl)
 
 #### 2.3.4.2 Funktionsbereich Product - Feld contract attributes
 

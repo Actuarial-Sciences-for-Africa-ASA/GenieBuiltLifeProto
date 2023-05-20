@@ -303,9 +303,9 @@ The product management is rudimentary. It contains only the tariff relevant part
 
 The semantics of this field are clear from the tariff debugger scripts.
 
-[Pension](debugcalcPEN.jl)
-[SingleLifeRisk](debugcalcSLR.jl)
-[JointLifeRisk](debugcalcJLR.jl)
+[Pension](https://github.com/Actuarial-Sciences-for-Africa-ASA/LifeInsuranceProduct.jl/blob/main/testCalPEN.jl)
+[SingleLifeRisk](https://github.com/Actuarial-Sciences-for-Africa-ASA/LifeInsuranceProduct.jl/blob/main/testCalcSLR.jl)
+[JointLifeRisk](https://github.com/Actuarial-Sciences-for-Africa-ASA/LifeInsuranceProduct.jl/blob/main/testCalcJLR.jl)
 
 #### 2.3.4.2 Product functional area - contract attributes field
 

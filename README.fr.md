@@ -305,9 +305,9 @@ La gestion des produits est rudimentaire. Elle ne contient que les données tari
 
 La sémantique de ce champ ressort clairement des scripts du débogueur de tarifs.
 
-[Pension](debugcalcPEN.jl)
-[SingleLifeRisk](debugcalcSLR.jl)
-[JointLifeRiskgh](debugcalcJLR.jl)
+[Pension](https://github.com/Actuarial-Sciences-for-Africa-ASA/LifeInsuranceProduct.jl/blob/main/testCalPEN.jl)
+[SingleLifeRisk](https://github.com/Actuarial-Sciences-for-Africa-ASA/LifeInsuranceProduct.jl/blob/main/testCalcSLR.jl)
+[JointLifeRisk](https://github.com/Actuarial-Sciences-for-Africa-ASA/LifeInsuranceProduct.jl/blob/main/testCalcJLR.jl)
 
 #### 2.3.4.2 Domaine fonctionnel du produit - champ des attributs du contrat
 

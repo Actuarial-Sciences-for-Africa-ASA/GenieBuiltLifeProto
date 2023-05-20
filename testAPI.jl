@@ -16,13 +16,13 @@ LifeInsuranceDataModel.load_model()
 using LifeInsuranceDataModel, LifeInsuranceProduct, SearchLight
 import SearchLight: Serializer.serialize
 
-tif = get_tariff_interface(Val(1))
+tif = alget_tariff_interface(1)
 ProfitParticipationTariff = create_tariff("Profit participation", 1, serialize(tif.parameters), serialize(tif.contract_attributes))
-tif = get_tariff_interface(Val(2))
+tif = get_tariff_interface(2)
 PensionTariff = create_tariff("Pension Insurance", 2, serialize(tif.parameters), serialize(tif.contract_attributes))
-tif = get_tariff_interface(Val(3))
+tif = get_tariff_interface(3)
 SingleLifeRiskTariff = create_tariff("Single Life Risk Insurance", 3, serialize(tif.parameters), serialize(tif.contract_attributes))
-tif = get_tariff_interface(Val(4))
+tif = get_tariff_interface(4)
 JointLifeRiskTariff = create_tariff("Joint Life Risk Insurance", 4, serialize(tif.parameters), serialize(tif.contract_attributes), [1, 2])
 
 
