@@ -318,6 +318,13 @@ This field defines the dynamic attributes of the tariff items.
 </p>
 </details>
 
+## 2.4 Next extensions of functionality
+
+Next steps of development will be
+- pluggable, i.e. product defined,  validations
+- pluggable, i.e. product defined,  workflow control
+
+
 ## 3 installation and startup
 
 The package needs a POSTGRES database, the [configuration folder](db) and product data [see: testScript](testAPI.jl)

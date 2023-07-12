@@ -74,6 +74,8 @@ end
   @in show_tariff_items::Bool = false
   @out d::Dict{String,Any} = Dict()
   @in tree::Vector{Dict{Symbol,Any}} = []
+  @out tariff_parameters::Dict{String,Any} = get_tariff_interface(2).parameters
+  @out contract_attributes::Dict{String,Any} = get_tariff_interface(2).contract_attributes
   @out rolesContractPartner::Vector{Dict{String,Any}} = []
   @out rolesTariffItem::Vector{Dict{String,Any}} = []
   @out rolesTariffItemPartner::Vector{Dict{String,Any}} = []

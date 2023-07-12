@@ -1,17 +1,17 @@
 
-#JSON.parse("""
-#{
-#  "test":
-#  {
-#  "foo": false,
-#  "baz": "qux",
-#  "corge": 
-#    {
-#      "grault": 1
-#    }
-#  } 
-#}
-#""")
+testdict = JSON.parse("""
+  {
+    "test":
+    {
+    "foo": false,
+    "baz": "qux",
+    "corge": 
+      {
+        "grault": 1
+      }
+    } 
+  }
+  """)
 
 dict(; kwargs...) = Dict{Symbol,Any}(kwargs...)
 const mydiv = Genie.Renderer.Html.div
@@ -51,7 +51,7 @@ function dict_tree(startfile; parent="calls", name="calls")
 end
 
 
-function gettree(nodes=:tree)
+function gettree(nodes=:contract_attributes_tree)
     row(cell(
         class="st-module",
         [

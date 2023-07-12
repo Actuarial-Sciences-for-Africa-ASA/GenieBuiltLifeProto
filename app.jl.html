@@ -117,11 +117,15 @@
                             </q-item-section>
                             <q-item-section>
                                 <p>tariff parameters</p>
-                                {{ppid['ref']['revision']['parameters']}}
+                                <div v-for="(def, name) in tariff_parameters">
+                                    <q-expansion-item :label=name>{{def}}</q-expansion-item>
+                                </div>
                             </q-item-section>
                             <q-item-section>
                                 <p>contract attributes</p>
-                                {{ppid['ref']['contract_attributes']}}
+                                <div v-for="(def, name) in contract_attributes">
+                                    <q-expansion-item :label=name>{{def}}</q-expansion-item>
+                                </div>
                             </q-item-section>
                             <q-item-section>
                                 <q-list dense="" bordered="" padding="" class="rounded-borders">

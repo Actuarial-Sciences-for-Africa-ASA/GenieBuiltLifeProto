@@ -316,6 +316,12 @@ Dieses Feld definiert die dynamischen Attribute der Tarifpositionen.
 </p>
 </details>
 
+## nächste Erweiterungen 
+
+- pluggable, also produktdefinierte, Validation
+- pluggable, also produktdefinierte, Workflowsteuerung
+
+
 ## 3 Installation und Start
 
 Das Package braucht eine POSTGRES-Datenbank, den [Konfigurationsordner](db) und Produktdaten [siehe: testSkript](testAPI.jl)
