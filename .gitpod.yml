@@ -2,7 +2,7 @@
 image:
   file: .gitpod.Dockerfile
 tasks:
-  - init: - init: julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate(); include("testAPI.jl")'
+  - init: julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate(); include("testAPI.jl")'
   - command: julia -e 'import Pkg; Pkg.instantiate(); include("run.jl")'
 
 ports:
