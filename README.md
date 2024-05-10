@@ -13,6 +13,7 @@ This project is an attempt to create a foundation for an open source system for 
 
 of this project are:
 
+* open source development
 * performant and highly scalable web app for* dialog processing of insurance contracts and.
 * provision of services for operation
 * runnability on laptops as well as on servers
@@ -25,7 +26,8 @@ of this project are:
   * control and validation of inputs for product-specific business processes
 * Use of an actuary-friendly development environment with regard to programming language and existing libraries
 * Use of an application stack that is as coherent as possible and supports tests across all levels from actuarial functions to persistence to the browser, i.e. no environmental break, between actuarial product development of and development of the management system.
-* Audit-proof storage of contracts through bitemporal persistence.
+* Use of existing actuarial software https://github.com/JuliaActuary/LifeContingencies.jl
+* Audit-proof storage of contracts through bitemporal persistence: https://github.com/Actuarial-Sciences-for-Africa-ASA/BitemporalPostgres.jl
 
 ## 2. functional scope of the prototype
 
