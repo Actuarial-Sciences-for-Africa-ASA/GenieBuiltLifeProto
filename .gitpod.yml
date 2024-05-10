@@ -2,9 +2,9 @@
 image:
   file: .gitpod.Dockerfile
 tasks:
-  - init: echo 'PATH_add /home/gitpod/julia-1.8.2/bin' > .envrc \
-      && echo 'export SEARCHLIGHT_USERNAME="gitpod"' >> .envrc \
-      && direnv allow .\
+  - init:   - init: echo 'PATH_add ~/julia-1.8.2/bin' > /workspace/.envrc \
+      && echo 'export SEARCHLIGHT_USERNAME="gitpod"' >> /workspace/.envrc \
+      && direnv allow /workspace \
       && julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate(); include("testAPI.jl")'
   - command: julia -e 'import Pkg; Pkg.instantiate(); include("run.jl")'
 
