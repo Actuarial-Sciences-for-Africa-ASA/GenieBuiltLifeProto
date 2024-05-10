@@ -3,7 +3,7 @@ image:
   file: .gitpod.Dockerfile
 tasks:
   - init: cat /home/gitpod/.envrc > .envrc && direnv allow . && julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate(); include("testAPI.jl")' 
-  - command: julia -e 'include("run.jl")'
+  - command: julia -e 'import Pkg;Pkg.instantiate(); include("run.jl")'
 
 ports:
   - name: postgres
