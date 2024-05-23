@@ -1,11 +1,7 @@
 
-image:
-  file: .gitpod.Dockerfile
+image: michaelfliegner/gitpodpgijulia
 tasks:
-  - init: echo 'PATH_add ~/julia-1.8.2/bin' > /workspace/.envrc \
-      && echo 'export SEARCHLIGHT_USERNAME="gitpod"' >> /workspace/.envrc \
-      && direnv allow /workspace \
-      && julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate(); include("testAPI.jl")'
+  - init: julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate(); include("testAPI.jl")'
   - command: julia -e 'import Pkg; Pkg.instantiate(); include("run.jl")'
 
 ports:
