@@ -1,7 +1,7 @@
 
 image: michaelfliegner/gitpodpgijulia
 tasks:
-  - command: julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate(); include("testAPI.jl")' 
+  - command: julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate(); include("run.jl")' 
 
 ports:
   - name: postgres
