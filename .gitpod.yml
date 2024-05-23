@@ -1,8 +1,6 @@
 
-image:
-  file: .gitpod.Dockerfile
+image: michaelfliegner/gitpodpgijulia
 tasks:
-  - init: cat /home/gitpod/.envrc > .envrc 
   - command: julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate(); include("testAPI.jl")' 
 
 ports:

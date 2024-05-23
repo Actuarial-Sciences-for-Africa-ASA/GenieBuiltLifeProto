@@ -1,5 +1,5 @@
 {
-    "julia.executablePath": "~/julia-1.8.2/bin/julia",
+    "julia.executablePath": "~/julia/bin/julia",
     "markdownlint.config": {
       "MD033": {
         "allowed_elements": ["br","details","img","p","summary"]
