@@ -3,13 +3,12 @@ using LifeInsuranceDataModel, LifeInsuranceProduct
 using SearchLight
 using SearchLightPostgreSQL
 using TimeZones
-ENV["SEARCHLIGHT_USERNAME"] = ENV["USER"]
-ENV["SEARCHLIGHT_PASSWORD"] = ENV["USER"]
 SearchLight.Configuration.load() |> SearchLight.connect
 
 SearchLight.query("DROP SCHEMA public CASCADE")
 SearchLight.query("CREATE SCHEMA public")
 LifeInsuranceDataModel.load_model()
+
 
 #   Creating Tariffs
 
